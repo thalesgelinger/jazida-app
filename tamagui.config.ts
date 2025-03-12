@@ -8,7 +8,8 @@ export const config = createTamagui({
         light: {
             ...defaultConfig.themes.light,
             main: "#F4C03E",
-            grey: "#B9C6DF"
+            grey: "#B9C6DF",
+            strongGrey: "#405473"
         }
     }
 })

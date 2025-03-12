@@ -20,20 +20,20 @@ export default function TabsLayout() {
     >
         <Tabs.Screen name="index" options={{
             tabBarIcon: ({ focused }) => <Truck size={36} color={focused ? theme.main?.val : theme.grey?.val} />,
-            headerShown: false,
-            tabBarShowLabel: false
+            tabBarShowLabel: false,
+            headerTitle: "Adicionar Carregamento"
         }} />
 
         <Tabs.Screen name="pending" options={{
             tabBarIcon: ({ focused }) => <ClockArrowUp size={36} color={focused ? theme.main?.val : theme.grey?.val} />,
-            headerShown: false,
-            tabBarShowLabel: false
+            tabBarShowLabel: false,
+            headerTitle: "Carregamentos não enviados"
         }} />
 
         <Tabs.Screen name="admin" options={{
             tabBarIcon: ({ focused }) => <FileSliders size={36} color={focused ? theme.main?.val : theme.grey?.val} />,
-            headerShown: false,
-            tabBarShowLabel: false
+            tabBarShowLabel: false,
+            headerTitle: "Carregamentos"
         }} />
     </Tabs>
 }
