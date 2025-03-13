@@ -1,5 +1,5 @@
 import { Image, Text, useTheme, View, XStack, YStack } from "tamagui";
-import { Check } from "lucide-react-native"
+import { Check, FileCheck } from "lucide-react-native"
 
 import React from 'react'
 import { FlatList } from "react-native";
@@ -18,21 +18,13 @@ export default function Pending() {
             material: "areia",
             signatureUrl: "https://scontent.fpoa2-1.fna.fbcdn.net/v/t39.30808-6/296375877_343371377999777_4026508833316169967_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=FaHf1tp7TgEQ7kNvgHbG2U1&_nc_oc=AdjjJtEp7Rfy4iBlwXrjd9TSdsfztD8b76GJUCpMo7ymva8RznLjI52SUGRJMRSiTm0&_nc_zt=23&_nc_ht=scontent.fpoa2-1.fna&_nc_gid=APnnDuuEtVGd-VwCXS-KIXk&oh=00_AYE7caeWN6asnSslNmUirUyHSvU_VB_ZLRzhqP0jhmuBTg&oe=67D91151",
             date: new Date()
-        },
-
-        {
-            client: "Fulano 1",
-            plate: "ABC-1234",
-            quantity: 40,
-            material: "areia",
-            signatureUrl: "https://scontent.fpoa2-1.fna.fbcdn.net/v/t39.30808-6/296375877_343371377999777_4026508833316169967_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=FaHf1tp7TgEQ7kNvgHbG2U1&_nc_oc=AdjjJtEp7Rfy4iBlwXrjd9TSdsfztD8b76GJUCpMo7ymva8RznLjI52SUGRJMRSiTm0&_nc_zt=23&_nc_ht=scontent.fpoa2-1.fna&_nc_gid=APnnDuuEtVGd-VwCXS-KIXk&oh=00_AYE7caeWN6asnSslNmUirUyHSvU_VB_ZLRzhqP0jhmuBTg&oe=67D91151",
-            date: new Date()
         }
     ]
 
     return (
         <View padding={20} backgroundColor={theme.background?.val} flex={1}>
             <FlatList
+                contentContainerStyle={{ flexGrow: 1 }}
                 data={loads}
                 renderItem={({ item }) => <LoadTile
                     client={item.client}
@@ -44,6 +36,17 @@ export default function Pending() {
                 />}
                 ItemSeparatorComponent={() => <View height={12} />}
                 keyExtractor={(_, i) => i.toString()}
+                ListEmptyComponent={() => (
+                    <YStack
+                        flex={1}
+                        alignItems="center"
+                        justifyContent="center"
+                        gap={12}
+                    >
+                        <Text fontSize={24}>Tudo certo, todos os carregamentos foram enviados</Text>
+                        <FileCheck color={theme.main?.val} size={72} />
+                    </YStack>
+                )}
             />
 
         </View>
