@@ -80,7 +80,7 @@ export const Signature = ({ isOpen, onSigned, onClose }: SignatureProps) => {
                 onTouchStart={onSignatureStart}
                 onTouchMove={onSignatureMove}
             >
-                <Path path={path} strokeWidth={1} style="stroke" />
+                <Path path={path} strokeWidth={2} style="stroke" />
             </Canvas>
 
             <Pressable onPress={onClose} style={{ top: 10, left: 10 }}>

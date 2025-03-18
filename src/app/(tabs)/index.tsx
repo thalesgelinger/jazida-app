@@ -6,6 +6,7 @@ import { ItemType } from "@/src/types/item";
 import { Button } from "@/src/shared/ui/button";
 import { Signature } from "@/src/features/new-load/signature";
 import { Image } from "expo-image"
+import { Pressable } from "react-native";
 
 export default function Index() {
 
@@ -85,23 +86,24 @@ export default function Index() {
                     {
                         signaturePath
                             ?
-                            <>
-                                <View width="100%" height={100} alignItems="center">
+                            <View alignItems="center" >
+                                <View
+                                    backgroundColor={theme.grey?.val}
+                                    borderRadius={12}
+                                    height={200}
+                                    padding={20}
+                                    width="100%"
+                                >
                                     <Image
                                         source={signaturePath}
                                         style={{
-                                            height: 100,
-                                            width: "80%"
-
+                                            height: "100%",
+                                            width: "100%",
                                         }}
                                         contentFit="contain"
                                     />
                                 </View>
-                                <Button
-                                    label="Limpar"
-                                    onPress={() => setSignaturePath("")}
-                                />
-                            </>
+                            </View>
                             : <Button
                                 label="Assinar"
                                 color={theme.main?.val}
@@ -110,6 +112,18 @@ export default function Index() {
                     }
                 </YStack>
             </ScrollView>
+            {signaturePath &&
+                <YStack position="fixed" bottom={0} paddingHorizontal={20}>
+                    <Button
+                        label="Enviar"
+                        color={theme.main?.val}
+                        onPress={() => setShowSignature(true)}
+                    />
+                    <Pressable onPress={() => setSignaturePath("")}>
+                        <Text textAlign="center" padding={20} fontWeight="bold" color="red">LIMPAR</Text>
+                    </Pressable>
+                </YStack>
+            }
             <Sheet
                 modal
                 open={showSignature}
@@ -120,10 +134,10 @@ export default function Index() {
             >
                 <Sheet.Overlay backgroundColor="'rgba(0, 0, 0, 0.3)'" />
                 <Sheet.Frame padding="20" position="relative" >
-                    <Signature 
+                    <Signature
                         isOpen={showSignature}
-                        onSigned={signed} 
-                        onClose={() => setShowSignature(false)} 
+                        onSigned={signed}
+                        onClose={() => setShowSignature(false)}
                     />
                 </Sheet.Frame>
             </Sheet>
