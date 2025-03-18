@@ -5,6 +5,7 @@ import { useState } from "react";
 import { ItemType } from "@/src/types/item";
 import { Button } from "@/src/shared/ui/button";
 import { Signature } from "@/src/features/new-load/signature";
+import { Image } from "expo-image"
 
 export default function Index() {
 
@@ -33,6 +34,7 @@ export default function Index() {
     const [client, setClient] = useState<ItemType<number>>()
     const [plate, setPlate] = useState<ItemType<number>>()
     const [material, setMaterial] = useState<ItemType<number>>()
+    const [signaturePath, setSignaturePath] = useState("")
 
     const selectClient = (val: number) => {
         const client = clients.find(c => c.value === val)
@@ -47,6 +49,12 @@ export default function Index() {
     const selectMaterial = (val: number) => {
         const material = materials.find(c => c.value === val)
         setMaterial(material);
+    }
+
+    const signed = (signaturePath: string) => {
+        console.log({ signaturePath })
+        setSignaturePath(signaturePath)
+        setShowSignature(false)
     }
 
     return (
@@ -74,11 +82,26 @@ export default function Index() {
                         onSelect={selectMaterial}
                     />
                     <View height={20} />
-                    <Button
-                        label="Assinar"
-                        color={theme.main?.val}
-                        onPress={() => setShowSignature(true)}
-                    />
+                    {
+                        signaturePath
+                            ?
+                            <View width="100%" height={100} alignItems="center">
+                                <Image
+                                    source={signaturePath}
+                                    style={{
+                                        height: 100,
+                                        width: "80%"
+
+                                    }}
+                                    contentFit="contain"
+                                />
+                            </View>
+                            : <Button
+                                label="Assinar"
+                                color={theme.main?.val}
+                                onPress={() => setShowSignature(true)}
+                            />
+                    }
                 </YStack>
             </ScrollView>
             <Sheet
@@ -91,11 +114,7 @@ export default function Index() {
             >
                 <Sheet.Overlay backgroundColor="'rgba(0, 0, 0, 0.3)'" />
                 <Sheet.Frame padding="20" position="relative" >
-                    <Signature />
-                    <YStack gap="$5" flex={1} justifyContent="center">
-                        <View height={2} width={"100%"} backgroundColor={"black"} />
-                        <Button label="Assinar" color={theme.main?.val} onPress={() => setShowSignature(false)} />
-                    </YStack>
+                    <Signature onSigned={signed} />
                 </Sheet.Frame>
             </Sheet>
         </>
