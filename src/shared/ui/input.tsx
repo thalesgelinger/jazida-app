@@ -1,11 +1,12 @@
-import { Search } from "lucide-react-native"
+import { LucideIcon } from "lucide-react-native"
 import { useTheme, XStack, Input as TInput } from "tamagui"
 
 type InputProps = {
     onChange: (value: string) => void
+    Icon?: LucideIcon
 }
 
-export const Input = ({ onChange }: InputProps) => {
+export const Input = ({ onChange, Icon }: InputProps) => {
     const theme = useTheme()
 
     return <XStack
@@ -20,6 +21,6 @@ export const Input = ({ onChange }: InputProps) => {
             borderWidth={0}
             onChangeText={onChange}
         />
-        <Search size={24} color={theme.strongGrey?.val} />
+        {Icon && <Icon size={24} color={theme.strongGrey?.val} />}
     </XStack>
 }

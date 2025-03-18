@@ -4,6 +4,7 @@ import { useState } from "react"
 import { FlatList } from "react-native"
 import { ItemType } from "@/src/types/item"
 import { Sheet, useTheme, View, YStack } from "tamagui"
+import { Search } from "lucide-react-native"
 
 type SelectProps<T> = {
     label: string
@@ -33,7 +34,7 @@ export const Select = <T extends any>({ label, Icon, items, onSelect }: SelectPr
             <Sheet.Overlay backgroundColor="'rgba(0, 0, 0, 0.3)'" />
             <Sheet.Frame padding="20" >
                 <YStack gap="$5">
-                    <Input onChange={setSeachTerm} />
+                    <Input onChange={setSeachTerm} Icon={Search} />
                     <FlatList
                         data={filteredItems}
                         renderItem={({ item }) => <Button

@@ -1,13 +1,16 @@
-import { ScrollView, useTheme, View, YStack } from "tamagui";
+import { ScrollView, Sheet, Text, useTheme, View, YStack } from "tamagui";
 import { Select } from "../../features/new-load"
 import { Car, Truck, User } from "lucide-react-native";
 import { useState } from "react";
 import { ItemType } from "@/src/types/item";
 import { Button } from "@/src/shared/ui/button";
+import { Signature } from "@/src/features/new-load/signature";
 
 export default function Index() {
 
     const theme = useTheme()
+
+    const [showSignature, setShowSignature] = useState(false);
 
     const clients: Array<ItemType<number>> = [
         { value: 1, label: "Fulano 1" },
@@ -47,34 +50,55 @@ export default function Index() {
     }
 
     return (
-        <ScrollView paddingVertical={16} paddingHorizontal={20}>
-            <YStack gap={8}>
-                <Select
-                    label={client?.label ?? "Selecionar Client"}
-                    Icon={User}
-                    items={clients}
-                    onSelect={selectClient}
-                />
+        <>
+            <ScrollView paddingVertical={16} paddingHorizontal={20}>
+                <YStack gap={8}>
+                    <Select
+                        label={client?.label ?? "Selecionar Client"}
+                        Icon={User}
+                        items={clients}
+                        onSelect={selectClient}
+                    />
 
-                <Select
-                    label={plate?.label ?? "Selecionar Placa"}
-                    Icon={Car}
-                    items={plates}
-                    onSelect={selectPlate}
-                />
+                    <Select
+                        label={plate?.label ?? "Selecionar Placa"}
+                        Icon={Car}
+                        items={plates}
+                        onSelect={selectPlate}
+                    />
 
-                <Select
-                    label={material?.label ?? "Selecionar Material"}
-                    Icon={Truck}
-                    items={materials}
-                    onSelect={selectMaterial}
-                />
-                <View height={20} />
-                <Button
-                    label="Assinar"
-                    color={theme.main?.val}
-                />
-            </YStack>
-        </ScrollView>
+                    <Select
+                        label={material?.label ?? "Selecionar Material"}
+                        Icon={Truck}
+                        items={materials}
+                        onSelect={selectMaterial}
+                    />
+                    <View height={20} />
+                    <Button
+                        label="Assinar"
+                        color={theme.main?.val}
+                        onPress={() => setShowSignature(true)}
+                    />
+                </YStack>
+            </ScrollView>
+            <Sheet
+                modal
+                open={showSignature}
+                onOpenChange={setShowSignature}
+                snapPoints={[95]}
+                dismissOnSnapToBottom
+                disableDrag
+            >
+                <Sheet.Overlay backgroundColor="'rgba(0, 0, 0, 0.3)'" />
+                <Sheet.Frame padding="20" position="relative" >
+                    <Signature />
+                    <YStack gap="$5" flex={1} justifyContent="center">
+                        <View height={2} width={"100%"} backgroundColor={"black"} />
+                        <Button label="Assinar" color={theme.main?.val} onPress={() => setShowSignature(false)} />
+                    </YStack>
+                </Sheet.Frame>
+            </Sheet>
+        </>
+
     );
 }
