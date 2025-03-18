@@ -85,17 +85,23 @@ export default function Index() {
                     {
                         signaturePath
                             ?
-                            <View width="100%" height={100} alignItems="center">
-                                <Image
-                                    source={signaturePath}
-                                    style={{
-                                        height: 100,
-                                        width: "80%"
+                            <>
+                                <View width="100%" height={100} alignItems="center">
+                                    <Image
+                                        source={signaturePath}
+                                        style={{
+                                            height: 100,
+                                            width: "80%"
 
-                                    }}
-                                    contentFit="contain"
+                                        }}
+                                        contentFit="contain"
+                                    />
+                                </View>
+                                <Button
+                                    label="Limpar"
+                                    onPress={() => setSignaturePath("")}
                                 />
-                            </View>
+                            </>
                             : <Button
                                 label="Assinar"
                                 color={theme.main?.val}
@@ -114,7 +120,11 @@ export default function Index() {
             >
                 <Sheet.Overlay backgroundColor="'rgba(0, 0, 0, 0.3)'" />
                 <Sheet.Frame padding="20" position="relative" >
-                    <Signature onSigned={signed} />
+                    <Signature 
+                        isOpen={showSignature}
+                        onSigned={signed} 
+                        onClose={() => setShowSignature(false)} 
+                    />
                 </Sheet.Frame>
             </Sheet>
         </>

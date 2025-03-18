@@ -1,20 +1,27 @@
 import { Button } from "@/src/shared/ui/button";
 import { assert } from "@/src/shared/utils/assert";
-import { Canvas, ImageFormat, Path, Skia, useCanvasRef } from "@shopify/react-native-skia"
-import { useState } from "react"
-import { GestureResponderEvent, StyleSheet } from "react-native"
+import { Canvas, Path, Skia, useCanvasRef } from "@shopify/react-native-skia"
+import { useEffect, useState } from "react"
+import { GestureResponderEvent, StyleSheet, Pressable } from "react-native"
 import { useTheme, View, YStack } from "tamagui";
 import { documentDirectory, writeAsStringAsync, EncodingType } from "expo-file-system"
 import { encode } from "base64-arraybuffer"
+import { X } from "lucide-react-native";
 
 type SignatureProps = {
     onSigned: (signaturePath: string) => void
+    onClose: () => void
+    isOpen: boolean
 }
 
-export const Signature = ({ onSigned }: SignatureProps) => {
+export const Signature = ({ isOpen, onSigned, onClose }: SignatureProps) => {
     const theme = useTheme()
     const [path, setPath] = useState(() => Skia.Path.Make());
     const canvas = useCanvasRef()
+
+    useEffect(() => {
+        setPath(() => Skia.Path.Make())
+    }, [isOpen]);
 
     const onSignatureStart = (e: GestureResponderEvent) => {
         const { locationX, locationY } = e.nativeEvent;
@@ -75,6 +82,10 @@ export const Signature = ({ onSigned }: SignatureProps) => {
             >
                 <Path path={path} strokeWidth={1} style="stroke" />
             </Canvas>
+
+            <Pressable onPress={onClose} style={{ top: 10, left: 10 }}>
+                <X color={"red"} />
+            </Pressable>
 
             <YStack gap="$5" flex={1} justifyContent="center">
                 <View height={2} width={"100%"} backgroundColor={"black"} />
