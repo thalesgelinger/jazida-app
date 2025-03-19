@@ -8,9 +8,10 @@ type SelectProps = {
     Icon?: JSX.ElementType
     color?: string
     onPress?: () => void
+    variant?: "small" | "large"
 }
 
-export const Button = ({ label, Icon, color, onPress }: SelectProps) => {
+export const Button = ({ label, Icon, color, onPress, variant = "large" }: SelectProps) => {
 
     const theme = useTheme()
 
@@ -19,7 +20,7 @@ export const Button = ({ label, Icon, color, onPress }: SelectProps) => {
             backgroundColor={color ?? theme.grey?.val}
             borderRadius={12}
             paddingHorizontal={16}
-            paddingVertical={20}
+            paddingVertical={variant == "large" ? 20 : 10}
             justifyContent={Icon ? "space-between" : "center"}
             alignItems="center"
         >

@@ -2,6 +2,8 @@ import { InputAdd } from "@/src/shared/ui/input-add"
 import { Sheet, useTheme, View, YStack } from "tamagui"
 import { ClientDropdown } from "./client-dropdown"
 import { FlatList } from "react-native"
+import { useClients } from "../new-load/use-clients"
+import { QueryClientProvider, useQueryClient } from "@tanstack/react-query"
 
 type ClientsSheetProps = {
     open: boolean
@@ -10,6 +12,10 @@ type ClientsSheetProps = {
 
 export const ClientsSheet = ({ open, onOpenChange }: ClientsSheetProps) => {
     const theme = useTheme()
+
+    const { data: clients } = useClients()
+    const queryClient = useQueryClient()
+
     return (
         <Sheet
             modal
@@ -20,27 +26,29 @@ export const ClientsSheet = ({ open, onOpenChange }: ClientsSheetProps) => {
         >
             <Sheet.Overlay backgroundColor="'rgba(0, 0, 0, 0.3)'" />
             <Sheet.Frame padding="20" >
-                <YStack gap="$5" flex={1}>
-                    <FlatList
-                        data={[1, 2, 3, 4]}
-                        ListHeaderComponent={
-                            <>
-                                <InputAdd onAdd={() => { }} />
-                                <View
-                                    marginVertical={12}
-                                    backgroundColor={theme.grey?.val}
-                                    height={2}
-                                    width={"100%"}
-                                />
-                            </>
-                        }
-                        renderItem={({ item }) => (
-                            <ClientDropdown />
-                        )}
-                        ItemSeparatorComponent={() => <View height={8} />}
-                        keyExtractor={item => item.toString()}
-                    />
-                </YStack>
+                <QueryClientProvider client={queryClient}>
+                    <YStack gap="$5" flex={1}>
+                        <FlatList
+                            data={clients}
+                            ListHeaderComponent={
+                                <>
+                                    <InputAdd onAdd={() => { }} />
+                                    <View
+                                        marginVertical={12}
+                                        backgroundColor={theme.grey?.val}
+                                        height={2}
+                                        width={"100%"}
+                                    />
+                                </>
+                            }
+                            renderItem={({ item: client }) => (
+                                <ClientDropdown client={client} />
+                            )}
+                            ItemSeparatorComponent={() => <View height={8} />}
+                            keyExtractor={item => item.value.toString()}
+                        />
+                    </YStack>
+                </QueryClientProvider>
             </Sheet.Frame>
         </Sheet>
     )
