@@ -5,6 +5,7 @@ import { Trash } from 'lucide-react-native'
 import React from 'react'
 import { FlatList } from 'react-native'
 import { Sheet, useTheme, View, YStack } from 'tamagui'
+import { useMaterials } from '../new-load/use-materials'
 
 type MaterialsSheetProps = {
     open: boolean
@@ -13,6 +14,8 @@ type MaterialsSheetProps = {
 
 export const MaterialsSheet = ({ open, onOpenChange }: MaterialsSheetProps) => {
     const theme = useTheme()
+
+    const { data: materials } = useMaterials()
 
     return (
         <Sheet
@@ -26,7 +29,7 @@ export const MaterialsSheet = ({ open, onOpenChange }: MaterialsSheetProps) => {
             <Sheet.Frame padding="20" >
                 <YStack gap="$5" flex={1}>
                     <FlatList
-                        data={[1, 2, 3, 4]}
+                        data={materials}
                         ListHeaderComponent={
                             <>
                                 <InputAdd onAdd={() => { }} />
@@ -40,13 +43,13 @@ export const MaterialsSheet = ({ open, onOpenChange }: MaterialsSheetProps) => {
                         }
                         renderItem={({ item }) => (
                             <Button
-                                label={item.toString()}
+                                label={item.label.toString()}
                                 Icon={Trash}
                                 color={theme.main?.val}
                             />
                         )}
                         ItemSeparatorComponent={() => <View height={8} />}
-                        keyExtractor={item => item.toString()}
+                        keyExtractor={item => item.value.toString()}
                     />
                 </YStack>
             </Sheet.Frame>

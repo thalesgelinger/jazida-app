@@ -1,12 +1,13 @@
 import { Button as TButton, Sheet, Text, useTheme, View, YStack } from "tamagui";
 import { Edit, FileCheck, Truck, User } from "lucide-react-native"
 import React, { useState } from 'react'
-import { FlatList } from "react-native";
+import { FlatList, RefreshControl } from "react-native";
 import { LoadTile } from "@/src/shared/ui/load-tile";
 import { Button } from "@/src/shared/ui/button";
 import { useLoads } from "@/src/features/new-load/use-loads";
 import { ClientsSheet } from "@/src/features/admin/clients-sheet";
 import { MaterialsSheet } from "@/src/features/admin/materials-sheet";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function Admin() {
 
@@ -16,7 +17,14 @@ export default function Admin() {
 
     const theme = useTheme()
 
-    const { query: { data: loads } } = useLoads()
+    const { query: { data: loads, isLoading } } = useLoads()
+
+    const queryClient = useQueryClient()
+
+    const onRefresh = () => {
+        queryClient.invalidateQueries({ queryKey: ['loads'] })
+    }
+
 
     return (
         <>
@@ -45,6 +53,9 @@ export default function Admin() {
                             <FileCheck color={theme.main?.val} size={72} />
                         </YStack>
                     )}
+                    refreshControl={
+                        <RefreshControl refreshing={isLoading} onRefresh={onRefresh} colors={["yellow"]} />
+                    }
                 />
 
                 <TButton
