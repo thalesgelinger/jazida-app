@@ -34,7 +34,7 @@ export const Select = <T extends any>({ label, Icon, items, onSelect }: SelectPr
             <Sheet.Overlay backgroundColor="'rgba(0, 0, 0, 0.3)'" />
             <Sheet.Frame padding="20" >
                 <YStack gap="$5">
-                    <Input onChange={setSeachTerm} Icon={Search} />
+                    <Input onChangeText={setSeachTerm} Icon={Search} />
                     <FlatList
                         data={filteredItems}
                         renderItem={({ item }) => <Button

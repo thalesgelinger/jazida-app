@@ -9,9 +9,10 @@ import { Image } from "expo-image"
 import { Animated, Pressable } from "react-native";
 import { Loading } from "@/src/shared/ui/loading";
 import { Input } from "@/src/shared/ui/input";
-import { useClients } from "@/src/shared/services/useClients";
 import { ClientSelector } from "@/src/features/new-load/client-selector";
 import { PlateSelector } from "@/src/features/new-load/plate-selector";
+import { MaterialSelector } from "@/src/features/new-load/material-selector";
+import { useLoads } from "@/src/features/new-load/use-loads";
 
 type SendStatus = "SENDING" | "NOT_SENT" | "SENT" | ""
 
@@ -23,36 +24,38 @@ export default function Index() {
     const [showSendModal, setShowSendModal] = useState(false);
     const [currentStatus, setCurrentStatus] = useState<SendStatus>("");
 
-    const materials: Array<ItemType<number>> = [
-        { value: 1, label: "Material 1" },
-        { value: 2, label: "Material 2" },
-        { value: 3, label: "Material 3" },
-    ]
-
     const [client, setClient] = useState<ItemType<number>>()
-    const [plate, setPlate] = useState<ItemType<number>>()
+    const [plate, setPlate] = useState<ItemType<{ id: number, clientId: number }>>()
     const [material, setMaterial] = useState<ItemType<number>>()
+    const [quantity, setQuantity] = useState("");
     const [signaturePath, setSignaturePath] = useState("")
 
-    const selectMaterial = (val: number) => {
-        const material = materials.find(c => c.value === val)
-        setMaterial(material);
-    }
+    const { saveLoad } = useLoads()
+
 
     const signed = (signaturePath: string) => {
         setSignaturePath(signaturePath)
         setShowSignature(false)
     }
 
-    const sendLoad = async () => {
+
+    const submitLoad = async () => {
         setShowSendModal(true)
         setCurrentStatus("SENDING")
+        if (!client) return;
+        if (!plate) return;
+        if (!material) return;
 
-        await new Promise<void>((res) => {
-            setTimeout(res, 1000)
+        await saveLoad({
+            clientId: client.value,
+            plateId: plate.value.id,
+            materialId: material.value,
+            quantity: parseFloat(quantity),
+            signaturePath,
+            insertedAt: new Date()
         })
 
-        setCurrentStatus("NOT_SENT")
+        setCurrentStatus("SENT")
 
         await new Promise<void>((res) => {
             setTimeout(res, 1000)
@@ -69,14 +72,10 @@ export default function Index() {
 
                     <PlateSelector client={client} plate={plate} onSelectPlate={setPlate} />
 
-                    <Select
-                        label={material?.label ?? "Selecionar Material"}
-                        Icon={Truck}
-                        items={materials}
-                        onSelect={selectMaterial}
-                    />
+                    <MaterialSelector material={material} onSelectMaterial={setMaterial} />
+
                     <Input
-                        onChange={() => { }}
+                        onChangeText={setQuantity}
                         height={20 * 2 + 16}
                         Icon={Truck}
                         keyboardType="number-pad"
@@ -114,7 +113,7 @@ export default function Index() {
                         <Button
                             label="Enviar"
                             color={theme.main?.val}
-                            onPress={sendLoad}
+                            onPress={submitLoad}
                         />
                         <Pressable onPress={() => setSignaturePath("")}>
                             <Text textAlign="center" padding={20} fontWeight="bold" color="red">LIMPAR</Text>
