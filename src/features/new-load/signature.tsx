@@ -6,7 +6,7 @@ import { GestureResponderEvent, StyleSheet, Pressable } from "react-native"
 import { useTheme, View, YStack } from "tamagui";
 import { documentDirectory, writeAsStringAsync, EncodingType } from "expo-file-system"
 import { encode } from "base64-arraybuffer"
-import { X } from "lucide-react-native";
+import { SquareX, X } from "lucide-react-native";
 
 type SignatureProps = {
     onSigned: (signaturePath: string) => void
@@ -83,8 +83,8 @@ export const Signature = ({ isOpen, onSigned, onClose }: SignatureProps) => {
                 <Path path={path} strokeWidth={2} style="stroke" />
             </Canvas>
 
-            <Pressable onPress={onClose} style={{ top: 10, left: 10 }}>
-                <X color={"red"} />
+            <Pressable onPress={onClose} style={{ position: "absolute", top: 20, right: 20 }}>
+                <SquareX color={"red"} />
             </Pressable>
 
             <YStack gap="$5" flex={1} justifyContent="center">
