@@ -6,6 +6,8 @@ import React from 'react'
 import { FlatList } from 'react-native'
 import { Sheet, useTheme, View, YStack } from 'tamagui'
 import { useMaterials } from '../new-load/use-materials'
+import { api } from '@/src/shared/services/api'
+import { useQueryClient } from '@tanstack/react-query'
 
 type MaterialsSheetProps = {
     open: boolean
@@ -44,7 +46,7 @@ export const MaterialsSheet = ({ open, onOpenChange }: MaterialsSheetProps) => {
                         renderItem={({ item }) => (
                             <Button
                                 label={item.label.toString()}
-                                Icon={Trash}
+                                //Icon={Trash}
                                 color={theme.main?.val}
                             />
                         )}

@@ -4,6 +4,7 @@ import { ClientDropdown } from "./client-dropdown"
 import { FlatList } from "react-native"
 import { useClients } from "../new-load/use-clients"
 import { QueryClientProvider, useQueryClient } from "@tanstack/react-query"
+import { api } from "@/src/shared/services/api"
 
 type ClientsSheetProps = {
     open: boolean
@@ -15,6 +16,13 @@ export const ClientsSheet = ({ open, onOpenChange }: ClientsSheetProps) => {
 
     const { data: clients } = useClients()
     const queryClient = useQueryClient()
+
+    const addNewClient = async (name: string) => {
+        await api.post("/clients", {
+            client: { name }
+        })
+        queryClient.invalidateQueries({ queryKey: ["clients"] })
+    }
 
     return (
         <Sheet
@@ -32,7 +40,7 @@ export const ClientsSheet = ({ open, onOpenChange }: ClientsSheetProps) => {
                             data={clients}
                             ListHeaderComponent={
                                 <>
-                                    <InputAdd onAdd={() => { }} />
+                                    <InputAdd onAdd={addNewClient} />
                                     <View
                                         marginVertical={12}
                                         backgroundColor={theme.grey?.val}

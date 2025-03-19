@@ -20,7 +20,10 @@ export const InputAdd = ({ onAdd }: InputAddProps) => {
             </View>
             <Button
                 backgroundColor={theme.strongGrey?.val}
-                onPress={() => onAdd(newAdd)}
+                onPress={() => {
+                    onAdd(newAdd)
+                    setNewAdd("")
+                }}
             >
                 <SquarePlus color={theme.grey?.val} size={24} />
             </Button>

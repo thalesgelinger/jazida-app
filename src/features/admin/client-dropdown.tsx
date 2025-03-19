@@ -1,6 +1,6 @@
 import { Button } from "@/src/shared/ui/button";
 import { ItemType } from "@/src/types/item";
-import { ChevronDown, ChevronUp, Trash } from "lucide-react-native";
+import { ChevronDown, ChevronUp, Plus, Trash } from "lucide-react-native";
 import { useState } from "react";
 import { FlatList, Pressable } from "react-native";
 import { Text, useTheme, View, XStack } from "tamagui";
@@ -42,11 +42,12 @@ export const ClientDropdown = ({ client }: ClientDropdownProps) => {
                     <XStack justifyContent="space-around" alignItems="center" paddingTop={10}>
                         <Button
                             label={"Adicionar Placa"}
-                            color={theme.main?.val} Icon={Trash}
+                            color={theme.main?.val}
+                            Icon={Plus}
                             variant="small"
                         />
                         <Pressable onPress={() => { }}>
-                            <Text textAlign="center" padding={20} fontWeight="bold" color="red">LIMPAR</Text>
+                            <Text textAlign="center" padding={20} fontWeight="bold" color="red">DELETAR CLIENTE</Text>
                         </Pressable>
                     </XStack>
                 )}
