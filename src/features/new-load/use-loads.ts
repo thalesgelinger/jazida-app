@@ -63,7 +63,6 @@ export const useLoads = () => {
         })
 
         await mutatition.mutateAsync({ ...load, signaturePath: uploadResponse.path })
-
     }
 
     return { saveLoad }

@@ -9,7 +9,7 @@ import { useClients } from './use-clients';
 
 
 type ClientSelectorProps = {
-    client: ItemType<number> | undefined
+    client: ItemType<number> | null
     onSelectClient: (value: ItemType<number>) => void
 }
 

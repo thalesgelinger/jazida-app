@@ -8,7 +8,7 @@ import { useMaterials } from './use-materials';
 
 
 type MaterialSelectorProps = {
-    material: ItemType<number> | undefined
+    material: ItemType<number> | null
     onSelectMaterial: (value: ItemType<number>) => void
 }
 

@@ -9,8 +9,8 @@ import { usePlates } from './use-plates';
 
 
 type PlateSelectorProps = {
-    client: ItemType<number> | undefined
-    plate: ItemType<{ id: number, clientId: number }> | undefined
+    client: ItemType<number> | null
+    plate: ItemType<{ id: number, clientId: number }> | null
     onSelectPlate: (value: ItemType<{ id: number, clientId: number }>) => void
 }
 

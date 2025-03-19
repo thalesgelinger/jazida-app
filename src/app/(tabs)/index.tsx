@@ -24,20 +24,18 @@ export default function Index() {
     const [showSendModal, setShowSendModal] = useState(false);
     const [currentStatus, setCurrentStatus] = useState<SendStatus>("");
 
-    const [client, setClient] = useState<ItemType<number>>()
-    const [plate, setPlate] = useState<ItemType<{ id: number, clientId: number }>>()
-    const [material, setMaterial] = useState<ItemType<number>>()
+    const [client, setClient] = useState<ItemType<number> | null>(null)
+    const [plate, setPlate] = useState<ItemType<{ id: number, clientId: number }> | null>(null)
+    const [material, setMaterial] = useState<ItemType<number> | null>(null)
     const [quantity, setQuantity] = useState("");
     const [signaturePath, setSignaturePath] = useState("")
 
     const { saveLoad } = useLoads()
 
-
     const signed = (signaturePath: string) => {
         setSignaturePath(signaturePath)
         setShowSignature(false)
     }
-
 
     const submitLoad = async () => {
         setShowSendModal(true)
@@ -57,11 +55,21 @@ export default function Index() {
 
         setCurrentStatus("SENT")
 
+        clean()
+
         await new Promise<void>((res) => {
             setTimeout(res, 1000)
         })
 
         setShowSendModal(false)
+    }
+
+    const clean = () => {
+        setClient(null)
+        setPlate(null)
+        setMaterial(null)
+        setQuantity("")
+        setSignaturePath("")
     }
 
     return (
@@ -75,6 +83,7 @@ export default function Index() {
                     <MaterialSelector material={material} onSelectMaterial={setMaterial} />
 
                     <Input
+                        value={quantity}
                         onChangeText={setQuantity}
                         height={20 * 2 + 16}
                         Icon={Truck}
