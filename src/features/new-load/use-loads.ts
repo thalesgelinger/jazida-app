@@ -1,5 +1,4 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { ItemType } from '@/src/types/item'
 import { api } from '@/src/shared/services/api'
 import { CamelKeysToSnake, SnakeKeysToCamel } from '@/src/types/obj-convert'
 import { camelToSnake, snakeToCamel } from '@/src/shared/utils/obj-format'
@@ -30,7 +29,7 @@ export const useLoads = () => {
         queryKey: ["loads"],
         queryFn: async () => {
             const response = await api.get<{ data: Array<LoadResponse> }>("/loads")
-            const loads = response.data.data.map((load) => snakeToCamel(load)) as Array<SnakeKeysToCamel<LoadResponse>>
+            const loads = response.data.data.map((load) => ({ ...snakeToCamel(load), insertedAt: new Date(load.inserted_at) })) as Array<SnakeKeysToCamel<LoadResponse> & { insertedAt: Date }>
             return loads
         }
     })
@@ -65,6 +64,6 @@ export const useLoads = () => {
         await mutatition.mutateAsync({ ...load, signaturePath: uploadResponse.path })
     }
 
-    return { saveLoad }
+    return { saveLoad, query }
 }
 

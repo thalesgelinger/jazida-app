@@ -7,6 +7,7 @@ import { LoadType } from "@/src/types/load";
 import { Button } from "@/src/shared/ui/button";
 import { InputAdd } from "@/src/shared/ui/input-add";
 import { ClientDropdown } from "@/src/features/admin/client-dropdown";
+import { useLoads } from "@/src/features/new-load/use-loads";
 
 export default function Admin() {
 
@@ -16,16 +17,7 @@ export default function Admin() {
 
     const theme = useTheme()
 
-    const loads: Array<LoadType> = [
-        {
-            client: "Fulano 1",
-            plate: "ABC-1234",
-            quantity: 40,
-            material: "areia",
-            signatureUrl: "https://scontent.fpoa2-1.fna.fbcdn.net/v/t39.30808-6/296375877_343371377999777_4026508833316169967_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=FaHf1tp7TgEQ7kNvgHbG2U1&_nc_oc=AdjjJtEp7Rfy4iBlwXrjd9TSdsfztD8b76GJUCpMo7ymva8RznLjI52SUGRJMRSiTm0&_nc_zt=23&_nc_ht=scontent.fpoa2-1.fna&_nc_gid=APnnDuuEtVGd-VwCXS-KIXk&oh=00_AYE7caeWN6asnSslNmUirUyHSvU_VB_ZLRzhqP0jhmuBTg&oe=67D91151",
-            date: new Date()
-        }
-    ]
+    const { query: { data: loads } } = useLoads()
 
     return (
         <>
@@ -38,8 +30,8 @@ export default function Admin() {
                         plate={item.plate}
                         quantity={item.quantity}
                         material={item.material}
-                        signatureUrl={item.signatureUrl}
-                        date={item.date}
+                        signatureUrl={item.signaturePath}
+                        date={item.insertedAt}
                     />}
                     ItemSeparatorComponent={() => <View height={12} />}
                     keyExtractor={(_, i) => i.toString()}
