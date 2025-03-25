@@ -15,7 +15,7 @@ type PlateSelectorProps = {
 }
 
 export const PlateSelector = ({ client, plate, onSelectPlate }: PlateSelectorProps) => {
-    const { data: plates = [], isLoading, error } = usePlates();
+    const { query: { data: plates = [], isLoading, error } } = usePlates();
 
     if (isLoading) {
         return <Loading />

@@ -14,7 +14,7 @@ type ClientSelectorProps = {
 }
 
 export const ClientSelector = ({ client, onSelectClient }: ClientSelectorProps) => {
-    const { data: clients = [], isLoading, error } = useClients();
+    const { query: { data: clients = [], isLoading, error } } = useClients();
 
     if (isLoading) {
         return <Loading />

@@ -14,7 +14,7 @@ type ClientsSheetProps = {
 export const ClientsSheet = ({ open, onOpenChange }: ClientsSheetProps) => {
     const theme = useTheme()
 
-    const { data: clients } = useClients()
+    const { query: { data: clients } } = useClients()
     const queryClient = useQueryClient()
 
     const addNewClient = async (name: string) => {

@@ -16,7 +16,7 @@ export const InputAdd = ({ onAdd }: InputAddProps) => {
     return (
         <XStack gap="$2">
             <View flex={1}>
-                <Input onChangeText={setNewAdd} />
+                <Input onChangeText={setNewAdd} value={newAdd} />
             </View>
             <Button
                 backgroundColor={theme.strongGrey?.val}

@@ -1,8 +1,9 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ItemType } from '@/src/types/item'
 import { api } from '@/src/shared/services/api'
 
 export const useClients = () => {
+    const queryClient = useQueryClient()
     const query = useQuery({
         queryKey: ["clients"],
         queryFn: async () => {
@@ -15,5 +16,15 @@ export const useClients = () => {
         }
     })
 
-    return query
+    const { mutateAsync: deleteClient } = useMutation({
+        mutationKey: ["delete-client"],
+        mutationFn: async (clientId: number) => {
+            await api.delete(`/clients/${clientId}`)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(["clients"])
+        }
+    })
+
+    return { query, deleteClient }
 }
