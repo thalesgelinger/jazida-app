@@ -1,7 +1,7 @@
 import { InputAdd } from "@/src/shared/ui/input-add"
 import { Sheet, useTheme, View, YStack } from "tamagui"
 import { ClientDropdown } from "./client-dropdown"
-import { FlatList } from "react-native"
+import { FlatList, KeyboardAvoidingView } from "react-native"
 import { useClients } from "../new-load/use-clients"
 import { QueryClientProvider, useQueryClient } from "@tanstack/react-query"
 import { api } from "@/src/shared/services/api"
@@ -31,6 +31,7 @@ export const ClientsSheet = ({ open, onOpenChange }: ClientsSheetProps) => {
             onOpenChange={onOpenChange}
             snapPoints={[70]}
             dismissOnSnapToBottom
+            moveOnKeyboardChange
         >
             <Sheet.Overlay backgroundColor="'rgba(0, 0, 0, 0.3)'" />
             <Sheet.Frame padding="20" >
