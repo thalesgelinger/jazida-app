@@ -1,15 +1,26 @@
 import { useNetwork } from "@/src/shared/hooks/useNetwork";
 import { Tabs } from "expo-router";
-import { Truck, ClockArrowUp, FileSliders } from "lucide-react-native";
+import { Truck, ClockArrowUp, FileSliders, WifiOff } from "lucide-react-native";
 import { Text, useTheme } from "tamagui";
+import { migrations } from "../../shared/services/db/migrations"
+import { db } from "../../shared/services/db";
+import { useEffect } from "react";
 
 
 export default function TabsLayout() {
 
     const theme = useTheme()
 
-
     const isConnected = useNetwork()
+
+    useEffect(() => {
+        try {
+            db.run(migrations)
+        } catch (error) {
+            console.log({ error })
+        }
+    }, []);
+
 
     return <Tabs
         screenOptions={{
@@ -19,7 +30,7 @@ export default function TabsLayout() {
                 paddingBottom: 10,
                 backgroundColor: "#fff",
             },
-            headerRight: () => !isConnected && <Text color={"red"}>desconectado</Text>
+            headerRight: () => !isConnected && <WifiOff color={"red"} />
         }}
     >
         <Tabs.Screen name="index" options={{

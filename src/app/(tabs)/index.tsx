@@ -15,8 +15,9 @@ import { MaterialSelector } from "@/src/features/new-load/material-selector";
 import { useLoads } from "@/src/features/new-load/use-loads";
 import { LoadType } from "@/src/types/load";
 import { PaymentMethodSelector } from "@/src/features/new-load/payment-method-selector";
+import { useNetwork } from "@/src/shared/hooks/useNetwork";
 
-type SendStatus = "SENDING" | "NOT_SENT" | "SENT" | ""
+type SendStatus = "SENDING" | "PENDING" | "SENT" | ""
 
 export default function Index() {
 
@@ -33,7 +34,9 @@ export default function Index() {
     const [quantity, setQuantity] = useState("");
     const [signaturePath, setSignaturePath] = useState("")
 
-    const { saveLoad } = useLoads()
+    const { saveLoad, saveLoadOffline } = useLoads()
+
+    const isConnected = useNetwork()
 
     const signed = (signaturePath: string) => {
         setSignaturePath(signaturePath)
@@ -48,7 +51,7 @@ export default function Index() {
         if (!material) return;
         if (!paymentMethod) return;
 
-        await saveLoad({
+        const payload = {
             clientId: client.value,
             plateId: plate.value.id,
             materialId: material.value,
@@ -56,9 +59,15 @@ export default function Index() {
             signaturePath,
             insertedAt: new Date(),
             paymentMethod: paymentMethod.value,
-        })
+        }
 
-        setCurrentStatus("SENT")
+        if (isConnected) {
+            await saveLoad(payload)
+            setCurrentStatus("SENT")
+        } else {
+            await saveLoadOffline(payload)
+            setCurrentStatus("PENDING")
+        }
 
         clean()
 
@@ -179,7 +188,7 @@ export default function Index() {
                             <Loading />
                         </YStack>
                     }
-                    {currentStatus === "NOT_SENT" &&
+                    {currentStatus === "PENDING" &&
                         <YStack flex={1} gap={12} alignItems="center" justifyContent="center">
                             <Text fontSize={24}>Sem internet, carregamento será enviado quando houver conecção</Text>
                             <Check size={60} color="black" />

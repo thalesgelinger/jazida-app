@@ -18,6 +18,8 @@ export const LoadTile = ({
     const theme = useTheme()
     const formatedDate = date.toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" })
 
+    const formattedSignature = signatureUrl.startsWith("file:") ? signatureUrl : `${api.defaults.baseURL}${signatureUrl}`
+
     return (
         <TouchableOpacity>
             <YStack
@@ -37,7 +39,7 @@ export const LoadTile = ({
                         width={129}
                     >
                         <Image
-                            source={`${api.defaults.baseURL}${signatureUrl}`}
+                            source={formattedSignature}
                             style={{
                                 height: "100%",
                                 width: "100%",
