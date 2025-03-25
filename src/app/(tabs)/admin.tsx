@@ -8,12 +8,17 @@ import { useLoads } from "@/src/features/new-load/use-loads";
 import { ClientsSheet } from "@/src/features/admin/clients-sheet";
 import { MaterialsSheet } from "@/src/features/admin/materials-sheet";
 import { useQueryClient } from "@tanstack/react-query";
+import { Input } from "@/src/shared/ui/input";
+
+const ADMIN_PASS = "admin"
 
 export default function Admin() {
 
     const [isOpen, setIsOpen] = useState(false)
     const [isOpenClients, setIsOpenClients] = useState(false)
     const [isOpenMaterials, setIsOpenMaterials] = useState(false)
+    const [auth, setAuth] = useState(false);
+    const [adminPass, setAdminPass] = useState("");
 
     const theme = useTheme()
 
@@ -25,6 +30,21 @@ export default function Admin() {
         queryClient.invalidateQueries({ queryKey: ['loads'] })
     }
 
+    const authorize = () => {
+        setAuth(adminPass === ADMIN_PASS)
+    }
+
+    if (!auth) {
+        return <YStack padding={20} justifyContent="center" flex={1} gap={20} >
+            <Text fontSize={24}>Para acessar a rea de admin você precisa da senha do admin</Text>
+            <Input
+                onChangeText={setAdminPass}
+                value={adminPass}
+                secureTextEntry
+            />
+            <Button label="Entrar" color={theme.main?.val} onPress={authorize} />
+        </YStack>
+    }
 
     return (
         <>
