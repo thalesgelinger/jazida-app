@@ -72,7 +72,7 @@ export default function Index() {
         clean()
 
         await new Promise<void>((res) => {
-            setTimeout(res, 1000)
+            setTimeout(res, 3000)
         })
 
         setShowSendModal(false)
