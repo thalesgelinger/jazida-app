@@ -2,7 +2,7 @@ import { Button } from "@/src/shared/ui/button";
 import { ItemType } from "@/src/types/item";
 import { ChevronDown, ChevronUp, Plus, Trash } from "lucide-react-native";
 import { useState } from "react";
-import { Alert, FlatList, Pressable } from "react-native";
+import { Alert, FlatList, KeyboardAvoidingView, Pressable } from "react-native";
 import { Dialog, Text, useTheme, View, XStack, ZStack } from "tamagui";
 import { usePlates } from "../new-load/use-plates";
 import { InputAdd } from "@/src/shared/ui/input-add";
@@ -119,8 +119,6 @@ export const ClientDropdown = ({ client }: ClientDropdownProps) => {
                 )}
             />}
         </View>
-
-
     )
 }
 

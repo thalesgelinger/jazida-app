@@ -1,10 +1,9 @@
 import { InputAdd } from "@/src/shared/ui/input-add"
 import { Sheet, useTheme, View, YStack } from "tamagui"
 import { ClientDropdown } from "./client-dropdown"
-import { FlatList, KeyboardAvoidingView } from "react-native"
+import { FlatList } from "react-native"
 import { useClients } from "../new-load/use-clients"
 import { QueryClientProvider, useQueryClient } from "@tanstack/react-query"
-import { api } from "@/src/shared/services/api"
 
 type ClientsSheetProps = {
     open: boolean
@@ -14,15 +13,8 @@ type ClientsSheetProps = {
 export const ClientsSheet = ({ open, onOpenChange }: ClientsSheetProps) => {
     const theme = useTheme()
 
-    const { query: { data: clients } } = useClients()
+    const { query: { data: clients }, createClient } = useClients()
     const queryClient = useQueryClient()
-
-    const addNewClient = async (name: string) => {
-        await api.post("/clients", {
-            client: { name }
-        })
-        queryClient.invalidateQueries({ queryKey: ["clients"] })
-    }
 
     return (
         <Sheet
@@ -41,7 +33,7 @@ export const ClientsSheet = ({ open, onOpenChange }: ClientsSheetProps) => {
                             data={clients}
                             ListHeaderComponent={
                                 <>
-                                    <InputAdd onAdd={addNewClient} />
+                                    <InputAdd onAdd={createClient} />
                                     <View
                                         marginVertical={12}
                                         backgroundColor={theme.grey?.val}

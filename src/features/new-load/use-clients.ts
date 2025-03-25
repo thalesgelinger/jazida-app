@@ -16,6 +16,18 @@ export const useClients = () => {
         }
     })
 
+    const { mutateAsync: createClient } = useMutation({
+        mutationKey: ["create-client"],
+        mutationFn: async (name: string) => {
+            await api.post("/clients", {
+                client: { name }
+            })
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(["clients"])
+        }
+    })
+
     const { mutateAsync: deleteClient } = useMutation({
         mutationKey: ["delete-client"],
         mutationFn: async (clientId: number) => {
@@ -26,5 +38,5 @@ export const useClients = () => {
         }
     })
 
-    return { query, deleteClient }
+    return { query, createClient, deleteClient }
 }
