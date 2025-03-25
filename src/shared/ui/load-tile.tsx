@@ -13,6 +13,7 @@ export const LoadTile = ({
     material,
     signatureUrl,
     date,
+    paymentMethod
 }: LoadTileProps) => {
     const theme = useTheme()
     const formatedDate = date.toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" })
@@ -46,7 +47,7 @@ export const LoadTile = ({
                     </View>
                 </XStack>
                 <XStack justifyContent="space-between">
-                    <Text>{quantity}m de {material}</Text>
+                    <Text>{quantity}m de {material} - {paymentMethod === "cash" ? "A vista" : "A prazo"}</Text>
                     <Text>{formatedDate}</Text>
                 </XStack>
             </YStack>

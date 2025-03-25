@@ -39,6 +39,7 @@ export default function Admin() {
                         material={item.material}
                         signatureUrl={item.signaturePath}
                         date={item.insertedAt}
+                        paymentMethod={item.paymentMethod}
                     />}
                     ItemSeparatorComponent={() => <View height={12} />}
                     keyExtractor={(_, i) => i.toString()}

@@ -13,6 +13,8 @@ import { ClientSelector } from "@/src/features/new-load/client-selector";
 import { PlateSelector } from "@/src/features/new-load/plate-selector";
 import { MaterialSelector } from "@/src/features/new-load/material-selector";
 import { useLoads } from "@/src/features/new-load/use-loads";
+import { LoadType } from "@/src/types/load";
+import { PaymentMethodSelector } from "@/src/features/new-load/payment-method-selector";
 
 type SendStatus = "SENDING" | "NOT_SENT" | "SENT" | ""
 
@@ -27,6 +29,7 @@ export default function Index() {
     const [client, setClient] = useState<ItemType<number> | null>(null)
     const [plate, setPlate] = useState<ItemType<{ id: number, clientId: number }> | null>(null)
     const [material, setMaterial] = useState<ItemType<number> | null>(null)
+    const [paymentMethod, setPaymentMethod] = useState<ItemType<LoadType["paymentMethod"]> | null>(null)
     const [quantity, setQuantity] = useState("");
     const [signaturePath, setSignaturePath] = useState("")
 
@@ -43,6 +46,7 @@ export default function Index() {
         if (!client) return;
         if (!plate) return;
         if (!material) return;
+        if (!paymentMethod) return;
 
         await saveLoad({
             clientId: client.value,
@@ -50,7 +54,8 @@ export default function Index() {
             materialId: material.value,
             quantity: parseFloat(quantity),
             signaturePath,
-            insertedAt: new Date()
+            insertedAt: new Date(),
+            paymentMethod: paymentMethod.value,
         })
 
         setCurrentStatus("SENT")
@@ -68,6 +73,7 @@ export default function Index() {
         setClient(null)
         setPlate(null)
         setMaterial(null)
+        setPaymentMethod(null)
         setQuantity("")
         setSignaturePath("")
     }
@@ -81,6 +87,8 @@ export default function Index() {
                     <PlateSelector client={client} plate={plate} onSelectPlate={setPlate} />
 
                     <MaterialSelector material={material} onSelectMaterial={setMaterial} />
+
+                    <PaymentMethodSelector paymentMethod={paymentMethod} onSelectPaymentMethod={setPaymentMethod} />
 
                     <Input
                         value={quantity}

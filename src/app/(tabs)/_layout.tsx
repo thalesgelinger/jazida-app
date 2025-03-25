@@ -1,12 +1,15 @@
+import { useNetwork } from "@/src/shared/hooks/useNetwork";
 import { Tabs } from "expo-router";
 import { Truck, ClockArrowUp, FileSliders } from "lucide-react-native";
-import { useTheme } from "tamagui";
+import { Text, useTheme } from "tamagui";
 
 
 export default function TabsLayout() {
 
     const theme = useTheme()
 
+
+    const isConnected = useNetwork()
 
     return <Tabs
         screenOptions={{
@@ -16,12 +19,13 @@ export default function TabsLayout() {
                 paddingBottom: 10,
                 backgroundColor: "#fff",
             },
+            headerRight: () => !isConnected && <Text color={"red"}>desconectado</Text>
         }}
     >
         <Tabs.Screen name="index" options={{
             tabBarIcon: ({ focused }) => <Truck size={36} color={focused ? theme.main?.val : theme.grey?.val} />,
             tabBarShowLabel: false,
-            headerTitle: "Adicionar Carregamento"
+            headerTitle: "Adicionar Carregamento",
         }} />
 
         <Tabs.Screen name="pending" options={{
