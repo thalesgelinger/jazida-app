@@ -95,6 +95,9 @@ importers:
       lucide-react-native:
         specifier: ^0.479.0
         version: 0.479.0(react-native-svg@15.11.2(react-native@0.76.7(@babel/core@7.26.10)(@babel/preset-env@7.26.9(@babel/core@7.26.10))(@react-native-community/cli-server-api@18.0.0)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1))(react-native@0.76.7(@babel/core@7.26.10)(@babel/preset-env@7.26.9(@babel/core@7.26.10))(@react-native-community/cli-server-api@18.0.0)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
+      moti:
+        specifier: ^0.30.0
+        version: 0.30.0(react-dom@18.3.1(react@18.3.1))(react-native-reanimated@3.16.7(@babel/core@7.26.10)(react-native@0.76.7(@babel/core@7.26.10)(@babel/preset-env@7.26.9(@babel/core@7.26.10))(@react-native-community/cli-server-api@18.0.0)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1))(react@18.3.1)
       react:
         specifier: 18.3.1
         version: 18.3.1
@@ -4506,6 +4509,11 @@ packages:
 
   moti@0.29.0:
     resolution: {integrity: sha512-o/blVE3lm0i/6E5X0RLK59SVWEGxo7pQh8dTm+JykVCYY9bcz0lWyZFCO1s+MMNq+nMsSZBX8lkp4im/AZmhyw==}
+    peerDependencies:
+      react-native-reanimated: '*'
+
+  moti@0.30.0:
+    resolution: {integrity: sha512-YN78mcefo8kvJaL+TZNyusq6YA2aMFvBPl8WiLPy4eb4wqgOFggJOjP9bUr2YO8PrAt0uusmRG8K4RPL4OhCsA==}
     peerDependencies:
       react-native-reanimated: '*'
 
@@ -11852,6 +11860,14 @@ snapshots:
   mkdirp@1.0.4: {}
 
   moti@0.29.0(react-dom@18.3.1(react@18.3.1))(react-native-reanimated@3.16.7(@babel/core@7.26.10)(react-native@0.76.7(@babel/core@7.26.10)(@babel/preset-env@7.26.9(@babel/core@7.26.10))(@react-native-community/cli-server-api@18.0.0)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1))(react@18.3.1):
+    dependencies:
+      framer-motion: 6.5.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react-native-reanimated: 3.16.7(@babel/core@7.26.10)(react-native@0.76.7(@babel/core@7.26.10)(@babel/preset-env@7.26.9(@babel/core@7.26.10))(@react-native-community/cli-server-api@18.0.0)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
+    transitivePeerDependencies:
+      - react
+      - react-dom
+
+  moti@0.30.0(react-dom@18.3.1(react@18.3.1))(react-native-reanimated@3.16.7(@babel/core@7.26.10)(react-native@0.76.7(@babel/core@7.26.10)(@babel/preset-env@7.26.9(@babel/core@7.26.10))(@react-native-community/cli-server-api@18.0.0)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1))(react@18.3.1):
     dependencies:
       framer-motion: 6.5.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-native-reanimated: 3.16.7(@babel/core@7.26.10)(react-native@0.76.7(@babel/core@7.26.10)(@babel/preset-env@7.26.9(@babel/core@7.26.10))(@react-native-community/cli-server-api@18.0.0)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)

@@ -1,3 +1,5 @@
+import 'react-native-reanimated'
+import 'react-native-gesture-handler'
 import { Slot } from "expo-router";
 import { TamaguiProvider, Theme } from '@tamagui/core'
 

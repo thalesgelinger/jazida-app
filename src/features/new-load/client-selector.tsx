@@ -34,7 +34,7 @@ export const ClientSelector = ({ client, onSelectClient }: ClientSelectorProps) 
 
     return (
         <Select
-            label={client?.label ?? "Selecionar Client"}
+            label={client?.label ?? "Selecionar Cliente"}
             Icon={User}
             items={clients}
             onSelect={selectClient}

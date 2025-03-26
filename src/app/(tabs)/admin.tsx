@@ -1,5 +1,5 @@
 import { Button as TButton, Sheet, Text, useTheme, View, YStack } from "tamagui";
-import { Edit, FileCheck, Truck, User } from "lucide-react-native"
+import { Edit, FileCheck, Truck, User, Settings } from "lucide-react-native"
 import React, { useState } from 'react'
 import { FlatList, RefreshControl } from "react-native";
 import { LoadTile } from "@/src/shared/ui/load-tile";
@@ -70,8 +70,7 @@ export default function Admin() {
                             justifyContent="center"
                             gap={12}
                         >
-                            <Text fontSize={24}>Tudo certo, todos os carregamentos foram enviados</Text>
-                            <FileCheck color={theme.main?.val} size={72} />
+                            <Truck color={theme.main?.val} size={72} />
                         </YStack>
                     )}
                     refreshControl={
@@ -88,7 +87,7 @@ export default function Admin() {
                     right={10}
                     onPress={() => setIsOpen(true)}
                 >
-                    <Edit color={theme.strongGrey?.val} size={24} />
+                    <Settings color={theme.strongGrey?.val} size={24} />
                 </TButton>
             </View>
 

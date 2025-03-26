@@ -47,6 +47,7 @@ export const usePlates = () => {
     const { mutateAsync: deletePlate } = useMutation({
         mutationKey: ["delete-plates"],
         mutationFn: async (plateId: number) => {
+            console.log({ plateId })
             await api.delete(`/plates/${plateId}`)
         },
         onSuccess: (data) => {

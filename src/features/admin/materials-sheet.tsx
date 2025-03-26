@@ -3,7 +3,7 @@ import { Button } from '@/src/shared/ui/button'
 import { InputAdd } from '@/src/shared/ui/input-add'
 import { Trash } from 'lucide-react-native'
 import React from 'react'
-import { FlatList } from 'react-native'
+import { Alert, FlatList } from 'react-native'
 import { Sheet, useTheme, View, YStack } from 'tamagui'
 import { useMaterials } from '../new-load/use-materials'
 import { api } from '@/src/shared/services/api'
@@ -17,7 +17,7 @@ type MaterialsSheetProps = {
 export const MaterialsSheet = ({ open, onOpenChange }: MaterialsSheetProps) => {
     const theme = useTheme()
 
-    const { data: materials } = useMaterials()
+    const { query: { data: materials }, createMaterial, deleteMaterial } = useMaterials()
 
     return (
         <Sheet
@@ -34,7 +34,7 @@ export const MaterialsSheet = ({ open, onOpenChange }: MaterialsSheetProps) => {
                         data={materials}
                         ListHeaderComponent={
                             <>
-                                <InputAdd onAdd={() => { }} />
+                                <InputAdd onAdd={(name) => { createMaterial(name) }} />
                                 <View
                                     marginVertical={12}
                                     backgroundColor={theme.grey?.val}
@@ -46,8 +46,24 @@ export const MaterialsSheet = ({ open, onOpenChange }: MaterialsSheetProps) => {
                         renderItem={({ item }) => (
                             <Button
                                 label={item.label.toString()}
-                                //Icon={Trash}
+                                Icon={Trash}
                                 color={theme.main?.val}
+                                onPress={() => {
+                                    Alert.alert(
+                                        "Confirmar",
+                                        `Tem certeza que quer dele deletar o material: ${item.label}?`,
+                                        [
+                                            { text: "Cancelar", style: "cancel" },
+                                            {
+                                                text: "Deletar", onPress: async () => {
+                                                    deleteMaterial(item.value)
+                                                }
+                                            },
+                                        ]
+                                    );
+                                }
+
+                                }
                             />
                         )}
                         ItemSeparatorComponent={() => <View height={8} />}
