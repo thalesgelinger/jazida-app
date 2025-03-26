@@ -13,7 +13,7 @@ type MaterialSelectorProps = {
 }
 
 export const MaterialSelector = ({ material, onSelectMaterial }: MaterialSelectorProps) => {
-    const { data: materials = [], isLoading, error } = useMaterials();
+    const { query: { data: materials = [], isLoading, error } } = useMaterials();
 
     if (isLoading) {
         return <Loading />

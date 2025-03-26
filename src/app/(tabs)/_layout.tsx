@@ -5,6 +5,7 @@ import { Text, useTheme } from "tamagui";
 import { migrations } from "../../shared/services/db/migrations"
 import { db } from "../../shared/services/db";
 import { useEffect } from "react";
+import { Alert } from "react-native";
 
 
 export default function TabsLayout() {
@@ -17,6 +18,11 @@ export default function TabsLayout() {
         try {
             db.run(migrations)
         } catch (error) {
+            Alert.alert(
+                "Confirmar",
+                "Error setting up local DB",
+                [{ text: "Ok", style: "default" }]
+            )
             console.log({ error })
         }
     }, []);
