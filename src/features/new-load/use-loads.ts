@@ -66,11 +66,15 @@ export const useLoads = () => {
                     "Content-Type": "multipart/form-data"
                 }
             })
+
+            const payload = {
+                ...camelToSnake(load),
+                signature_path: uploadResponse.path,
+                inserted_at: load.insertedAt
+            }
+
             await api.post<{ data: LoadResponse }, { load: NewLoadRequest }>("/loads", {
-                load: {
-                    ...camelToSnake(load),
-                    signature_path: uploadResponse.path
-                },
+                load: payload,
             })
         },
         onError: (e) => {

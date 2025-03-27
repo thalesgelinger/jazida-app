@@ -1,5 +1,5 @@
 import { Button as TButton, Sheet, Text, useTheme, View, YStack } from "tamagui";
-import { Edit, FileCheck, Truck, User, Settings } from "lucide-react-native"
+import { Edit, FileCheck, Truck, User, Settings, File } from "lucide-react-native"
 import React, { useState } from 'react'
 import { FlatList, RefreshControl } from "react-native";
 import { LoadTile } from "@/src/shared/ui/load-tile";
@@ -9,6 +9,9 @@ import { ClientsSheet } from "@/src/features/admin/clients-sheet";
 import { MaterialsSheet } from "@/src/features/admin/materials-sheet";
 import { useQueryClient } from "@tanstack/react-query";
 import { Input } from "@/src/shared/ui/input";
+import { documentDirectory, EncodingType, writeAsStringAsync } from "expo-file-system";
+import { isAvailableAsync, shareAsync } from "expo-sharing"
+import { formatSignatureUrl } from "@/src/shared/utils/format-signature";
 
 const ADMIN_PASS = "admin"
 
@@ -22,7 +25,7 @@ export default function Admin() {
 
     const theme = useTheme()
 
-    const { query: { data: loads, isLoading } } = useLoads()
+    const { query: { data: loads = [], isLoading } } = useLoads()
 
     const queryClient = useQueryClient()
 
@@ -32,6 +35,71 @@ export default function Admin() {
 
     const authorize = () => {
         setAuth(adminPass === ADMIN_PASS)
+    }
+
+    const exportToCsv = async () => {
+        try {
+            const keys = Object.keys(loads[0]);
+            const mappedHeader: Record<keyof typeof loads[0], string> = {
+                id: "ID",
+                client: "Cliente",
+                quantity: "Quantidade",
+                plate: "Placa",
+                material: "Material",
+                signaturePath: "Assinatura",
+                insertedAt: "Data/Hora",
+                paymentMethod: "Pagamento"
+            }
+            const header = keys.map(key => mappedHeader[key as keyof typeof mappedHeader])
+            const content = loads.map(load => {
+                const values = keys.map((key) => {
+                    switch (key) {
+                        case "insertedAt":
+                            return formatBRTDate(load[key])
+                        case "signaturePath":
+                            return formatSignatureUrl(load[key])
+                        case "paymentMethod":
+                            return load[key] === "cash" ? "A vista" : "A prazo"
+                        case "quantity":
+                            return `${load[key]}m`
+                        default:
+                            return `"${load[key as keyof typeof load]}"`
+                    }
+                });
+                return values.join(",");
+            });
+
+            const csvString = [header, ...content].join("\n");
+            const fileUri = documentDirectory + "Carregamentos.csv";
+
+            await writeAsStringAsync(fileUri, csvString, {
+                encoding: EncodingType.UTF8,
+            });
+
+            if (await isAvailableAsync()) {
+                await shareAsync(fileUri);
+            } else {
+                console.log("Sharing is not available on this device");
+            }
+        } catch (error) {
+            console.error("Error exporting CSV:", error);
+        }
+    }
+
+    const formatBRTDate = (date: Date): string => {
+        const brtDate = new Date(date).toLocaleString("pt-BR", {
+            timeZone: "America/Sao_Paulo",
+            weekday: "long",
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false,
+        });
+
+        return brtDate.replace(",", " ");
     }
 
     if (!auth) {
@@ -113,6 +181,13 @@ export default function Admin() {
                             Icon={Truck}
                             color={theme.main?.val}
                             onPress={() => { setIsOpenMaterials(true) }}
+                        />
+
+                        <Button
+                            label="Exportar para csv"
+                            Icon={File}
+                            color={theme.main?.val}
+                            onPress={exportToCsv}
                         />
                     </YStack>
                 </Sheet.Frame>

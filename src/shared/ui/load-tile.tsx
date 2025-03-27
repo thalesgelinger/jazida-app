@@ -5,6 +5,7 @@ import { TouchableOpacity } from "react-native";
 import { Image } from "expo-image"
 import { Link } from "expo-router";
 import Animated from "react-native-reanimated";
+import { formatSignatureUrl } from "../utils/format-signature";
 
 
 type LoadTileProps = LoadType
@@ -21,7 +22,7 @@ export const LoadTile = ({
     const theme = useTheme()
     const formatedDate = date.toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" })
 
-    const formattedSignature = signatureUrl.startsWith("file:") ? signatureUrl : `${api.defaults.baseURL}${signatureUrl}`
+    const formattedSignature = formatSignatureUrl(signatureUrl)
 
     return (
         <Link href={`/image/${encodeURIComponent(formattedSignature)}`} asChild>
