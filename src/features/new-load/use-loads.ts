@@ -36,7 +36,7 @@ export const useLoads = () => {
 
     const { query: { data: clients = [] } } = useClients()
     const { query: { data: plates = [] } } = usePlates()
-    const { data: materials = [] } = useMaterials()
+    const { query: { data: materials = [] } } = useMaterials()
 
     const query = useQuery({
         queryKey: ["loads"],

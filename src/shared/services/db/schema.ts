@@ -14,3 +14,8 @@ export const loads = sqliteTable('loads', {
     paymentMethod: text({ enum: ["installment", "cash"] }).notNull(),
     insertedAt: integer({ mode: "timestamp" }).notNull()
 })
+
+export const materials = sqliteTable('materials', {
+    id: integer().unique().notNull(),
+    name: text().notNull(),
+})

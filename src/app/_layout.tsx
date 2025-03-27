@@ -21,7 +21,7 @@ export default function RootLayout() {
                         <Button
                             position="absolute"
                             top={60}
-                            right={20}
+                            left={20}
                             backgroundColor="blue"
                             color="white"
                             height={30}

@@ -1,7 +1,7 @@
 import { useNetwork } from "@/src/shared/hooks/useNetwork";
 import { Tabs } from "expo-router";
 import { Truck, ClockArrowUp, FileSliders, WifiOff } from "lucide-react-native";
-import { Text, useTheme } from "tamagui";
+import { useTheme } from "tamagui";
 import { migrations } from "../../shared/services/db/migrations"
 import { db } from "../../shared/services/db";
 import { useEffect } from "react";
@@ -16,7 +16,9 @@ export default function TabsLayout() {
 
     useEffect(() => {
         try {
-            db.run(migrations)
+            for (let migration of migrations) {
+                db.run(migration)
+            }
         } catch (error) {
             Alert.alert(
                 "Confirmar",

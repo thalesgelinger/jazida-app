@@ -102,6 +102,7 @@ export default function Index() {
                     <Input
                         value={quantity}
                         onChangeText={setQuantity}
+                        placeholder="Digite a quantidade em metros"
                         height={20 * 2 + 16}
                         Icon={Truck}
                         keyboardType="number-pad"
