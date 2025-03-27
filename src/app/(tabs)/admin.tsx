@@ -36,7 +36,7 @@ export default function Admin() {
 
     if (!auth) {
         return <YStack padding={20} justifyContent="center" flex={1} gap={20} >
-            <Text fontSize={24}>Para acessar a rea de admin você precisa da senha do admin</Text>
+            <Text fontSize={24}>Para acessar a area de admin você precisa da senha do admin</Text>
             <Input
                 onChangeText={setAdminPass}
                 value={adminPass}

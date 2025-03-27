@@ -16,8 +16,8 @@ export default function RootLayout() {
             <PortalProvider>
                 <QueryClientProvider client={queryClient}>
                     <Stack screenOptions={{ headerShown: false }}>
-                        <Stack.Screen name="/(tabs)/index" />
-                        <Stack.Screen name="/image/[imageUri]" />
+                        <Stack.Screen name="(tabs)" />
+                        <Stack.Screen name="image/[imageUri]" />
                     </Stack>
                 </QueryClientProvider>
             </PortalProvider>
