@@ -1,20 +1,46 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ItemType } from '@/src/types/item'
 import { api } from '@/src/shared/services/api'
+import { useNetwork } from '@/src/shared/hooks/useNetwork'
+import { db } from '@/src/shared/services/db'
+import * as schema from "../../shared/services/db/schema"
+
+
+type Client = {
+    id: number,
+    name: string,
+}
 
 export const useClients = () => {
+
+    const isConnected = useNetwork()
+
     const queryClient = useQueryClient()
+
     const query = useQuery({
-        queryKey: ["clients"],
+        queryKey: ["clients", isConnected],
         queryFn: async () => {
-            const response = await api.get<{ data: Array<{ id: number, name: string }> }>("/clients")
-            const clients: Array<ItemType<number>> = response.data.data.map((client) => ({
-                value: client.id,
-                label: client.name
-            }))
-            return clients
+            const clients = await db.select().from(schema.clients)
+
+            if (isConnected) {
+                const { data: response } = await api.get<{ data: Array<Client> }>("/clients")
+                response.data.forEach(async (client) => {
+                    if (clients.some(m => client.id === m.id)) return;
+                    await db.insert(schema.clients).values(client)
+                })
+                return formatClients(response.data)
+            }
+            return formatClients(clients)
         }
     })
+
+    const formatClients = (data: Array<Client>) => {
+        const materials: Array<ItemType<number>> = data.map((material) => ({
+            value: material.id,
+            label: material.name
+        }))
+        return materials
+    }
 
     const { mutateAsync: createClient } = useMutation({
         mutationKey: ["create-client"],
@@ -24,7 +50,7 @@ export const useClients = () => {
             })
         },
         onSuccess: () => {
-            queryClient.invalidateQueries(["clients"])
+            queryClient.invalidateQueries(["clients", true])
         }
     })
 
@@ -34,7 +60,7 @@ export const useClients = () => {
             await api.delete(`/clients/${clientId}`)
         },
         onSuccess: () => {
-            queryClient.invalidateQueries(["clients"])
+            queryClient.invalidateQueries(["clients", true])
         }
     })
 

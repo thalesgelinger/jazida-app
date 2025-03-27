@@ -15,6 +15,12 @@ export const loads = sqliteTable('loads', {
     insertedAt: integer({ mode: "timestamp" }).notNull()
 })
 
+
+export const clients = sqliteTable('clients', {
+    id: integer().unique().notNull(),
+    name: text().notNull(),
+})
+
 export const materials = sqliteTable('materials', {
     id: integer().unique().notNull(),
     name: text().notNull(),

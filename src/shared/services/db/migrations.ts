@@ -13,6 +13,12 @@ export const migrations = [
         );
     `,
     sql`
+        CREATE TABLE IF NOT EXISTS clients (
+            id integer NOT NULL,
+            name text NOT NULL
+        );
+    `,
+    sql`
         CREATE TABLE IF NOT EXISTS materials (
             id integer NOT NULL,
             name text NOT NULL
