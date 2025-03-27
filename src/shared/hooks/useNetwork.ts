@@ -13,6 +13,5 @@ export const useNetwork = () => {
         };
     }, []);
 
-    return false
     return isConnected
 }

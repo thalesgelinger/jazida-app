@@ -19,9 +19,17 @@ export const migrations = [
         );
     `,
     sql`
+        CREATE TABLE IF NOT EXISTS plates (
+            id integer NOT NULL,
+            client_id integer NOT NULL,
+            name text NOT NULL
+        );
+    `,
+    sql`
         CREATE TABLE IF NOT EXISTS materials (
             id integer NOT NULL,
             name text NOT NULL
         );
     `
 ]
+

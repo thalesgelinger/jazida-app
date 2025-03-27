@@ -35,7 +35,7 @@ export const PlateSelector = ({ client, plate, onSelectPlate }: PlateSelectorPro
 
     return (
         <Select
-            label={plate?.label ?? "Selecionar placa"}
+            label={plate?.label ?? "Selecionar Placa"}
             Icon={Car}
             items={plates.filter(plate => plate.value.clientId === client?.value)}
             onSelect={selectPlate}

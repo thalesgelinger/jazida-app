@@ -21,6 +21,12 @@ export const clients = sqliteTable('clients', {
     name: text().notNull(),
 })
 
+export const plates = sqliteTable('plates', {
+    id: integer().unique().notNull(),
+    name: text().notNull(),
+    client_id: integer().notNull(),
+})
+
 export const materials = sqliteTable('materials', {
     id: integer().unique().notNull(),
     name: text().notNull(),

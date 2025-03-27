@@ -2,22 +2,47 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ItemType } from '@/src/types/item'
 import { api } from '@/src/shared/services/api'
+import { db } from '@/src/shared/services/db'
+import * as schema from "../../shared/services/db/schema"
+import { useNetwork } from '@/src/shared/hooks/useNetwork'
+
+type Plate = {
+    id: number,
+    name: string,
+    client_id: number
+}
 
 export const usePlates = () => {
+
+    const isConnected = useNetwork()
 
     const queryClient = useQueryClient()
 
     const query = useQuery({
-        queryKey: ["plates"],
+        queryKey: ["plates", isConnected],
         queryFn: async () => {
-            const response = await api.get<{ data: Array<{ id: number, name: string, client_id: number }> }>("/plates")
-            const plates: Array<ItemType<{ id: number, clientId: number }>> = response.data.data.map((plate) => ({
-                value: { id: plate.id, clientId: plate.client_id },
-                label: plate.name
-            }))
-            return plates
+            const plates = await db.select().from(schema.plates)
+
+            if (isConnected) {
+                const { data: response } = await api.get<{ data: Array<Plate> }>("/plates")
+                response.data.forEach(async (plate) => {
+                    if (plates.some(m => plate.id === m.id)) return;
+                    await db.insert(schema.plates).values(plate)
+                })
+                return formatPlates(response.data)
+            }
+
+            return formatPlates(plates)
         }
     })
+
+    const formatPlates = (data: Array<Plate>) => {
+        const plates: Array<ItemType<{ id: number, clientId: number }>> = data.map((plate) => ({
+            value: { id: plate.id, clientId: plate.client_id },
+            label: plate.name
+        }))
+        return plates
+    }
 
     const { mutateAsync: createPlate } = useMutation({
         mutationKey: ["create-plates"],
@@ -39,7 +64,7 @@ export const usePlates = () => {
             // }
 
             // queryClient.setQueryData(["plates"], [...currentPlates, newPlate])
-            queryClient.invalidateQueries(["plates"])
+            queryClient.invalidateQueries(["plates", true])
         }
     })
 
@@ -51,7 +76,7 @@ export const usePlates = () => {
             await api.delete(`/plates/${plateId}`)
         },
         onSuccess: (data) => {
-            queryClient.invalidateQueries(["plates"])
+            queryClient.invalidateQueries(["plates", true])
         }
     })
 
