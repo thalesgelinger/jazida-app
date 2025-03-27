@@ -8,6 +8,7 @@ import * as schema from "../../shared/services/db/schema"
 import { useClients } from './use-clients'
 import { usePlates } from './use-plates'
 import { useMaterials } from './use-materials'
+import { useNetwork } from '@/src/shared/hooks/useNetwork'
 
 export type LoadRequest = {
     clientId: number
@@ -38,8 +39,10 @@ export const useLoads = () => {
     const { query: { data: plates = [] } } = usePlates()
     const { query: { data: materials = [] } } = useMaterials()
 
+    const isConnected = useNetwork()
+
     const query = useQuery({
-        queryKey: ["loads"],
+        queryKey: ["loads", isConnected],
         queryFn: async () => {
             const response = await api.get<{ data: Array<LoadResponse> }>("/loads")
             const loads = response.data.data.map((load) => ({ ...snakeToCamel(load), insertedAt: new Date(load.inserted_at) })) as Array<SnakeToCamel<LoadResponse> & { insertedAt: Date }>

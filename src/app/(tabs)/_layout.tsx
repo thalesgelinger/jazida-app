@@ -1,7 +1,7 @@
 import { useNetwork } from "@/src/shared/hooks/useNetwork";
 import { Tabs } from "expo-router";
 import { Truck, ClockArrowUp, FileSliders, WifiOff } from "lucide-react-native";
-import { useTheme } from "tamagui";
+import { useTheme, View } from "tamagui";
 import { migrations } from "../../shared/services/db/migrations"
 import { db } from "../../shared/services/db";
 import { useEffect } from "react";
@@ -38,7 +38,9 @@ export default function TabsLayout() {
                 paddingBottom: 10,
                 backgroundColor: "#fff",
             },
-            headerRight: () => !isConnected && <WifiOff color={"red"} />
+            headerRight: () => !isConnected && <View marginRight={20}>
+                <WifiOff color={"red"} />
+            </View>
         }}
     >
         <Tabs.Screen name="index" options={{
