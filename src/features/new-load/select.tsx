@@ -19,7 +19,7 @@ export const Select = <T extends any>({ label, Icon, items, onSelect }: SelectPr
 
     const [searchTerm, setSeachTerm] = useState("")
 
-    const filteredItems = items.filter(item => item.label.includes(searchTerm.toLowerCase()))
+    const filteredItems = items.filter(item => item.label.toLowerCase().includes(searchTerm.toLowerCase()))
 
     return <>
         <Button label={label} Icon={Icon} onPress={() => { setIsOpen(true); }} />

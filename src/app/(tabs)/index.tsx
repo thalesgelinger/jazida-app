@@ -6,7 +6,7 @@ import { ItemType } from "@/src/types/item";
 import { Button } from "@/src/shared/ui/button";
 import { Signature } from "@/src/features/new-load/signature";
 import { Image } from "expo-image"
-import { Animated, Pressable } from "react-native";
+import { Alert, Animated, Pressable } from "react-native";
 import { Loading } from "@/src/shared/ui/loading";
 import { Input } from "@/src/shared/ui/input";
 import { ClientSelector } from "@/src/features/new-load/client-selector";
@@ -87,6 +87,35 @@ export default function Index() {
         setSignaturePath("")
     }
 
+    const sign = () => {
+        if (!client) {
+            Alert.alert("Inválido", "Cliente não informado")
+            return
+        }
+
+        if (!plate) {
+            Alert.alert("Inválido", "Placa não informada")
+            return
+        }
+
+        if (!material) {
+            Alert.alert("Inválido", "Material não informado")
+            return
+        }
+
+        if (!paymentMethod) {
+            Alert.alert("Inválido", "Método de pagamento não informado")
+            return
+        }
+
+        if (!quantity) {
+            Alert.alert("Inválido", "Quantidade não informado")
+            return
+        }
+
+        setShowSignature(true)
+    }
+
     return (
         <>
             <ScrollView paddingVertical={16} paddingHorizontal={20}>
@@ -149,7 +178,7 @@ export default function Index() {
                     : <Button
                         label="Assinar"
                         color={theme.main?.val}
-                        onPress={() => setShowSignature(true)}
+                        onPress={sign}
                     />
                 }
             </YStack>
