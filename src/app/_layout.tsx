@@ -1,6 +1,6 @@
 import 'react-native-reanimated'
 import 'react-native-gesture-handler'
-import { Slot } from "expo-router";
+import { Slot, Stack } from "expo-router";
 import { TamaguiProvider, Theme } from '@tamagui/core'
 
 import { config } from '../../tamagui.config'
@@ -15,7 +15,10 @@ export default function RootLayout() {
         <Theme name="light">
             <PortalProvider>
                 <QueryClientProvider client={queryClient}>
-                    <Slot />
+                    <Stack screenOptions={{ headerShown: false }}>
+                        <Stack.Screen name="/(tabs)/index" />
+                        <Stack.Screen name="/image/[imageUri]" />
+                    </Stack>
                 </QueryClientProvider>
             </PortalProvider>
         </Theme>

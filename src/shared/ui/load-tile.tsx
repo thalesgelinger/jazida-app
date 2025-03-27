@@ -3,6 +3,9 @@ import { Text, useTheme, View, XStack, YStack } from "tamagui";
 import { api } from "../services/api";
 import { TouchableOpacity } from "react-native";
 import { Image } from "expo-image"
+import { Link } from "expo-router";
+import Animated from "react-native-reanimated";
+
 
 type LoadTileProps = LoadType
 
@@ -21,38 +24,41 @@ export const LoadTile = ({
     const formattedSignature = signatureUrl.startsWith("file:") ? signatureUrl : `${api.defaults.baseURL}${signatureUrl}`
 
     return (
-        <TouchableOpacity>
-            <YStack
-                backgroundColor={theme.main?.val} padding={12}
-                borderRadius={12}
-            >
-                <XStack justifyContent="space-between" marginBottom={8} alignItems="center">
-                    <YStack>
-                        <Text fontSize={24}>{client}</Text>
-                        <Text>{plate}</Text>
-                    </YStack>
-                    <View
-                        backgroundColor={"white"}
-                        borderRadius={12}
-                        padding={20}
-                        height={75}
-                        width={129}
-                    >
-                        <Image
-                            source={formattedSignature}
-                            style={{
-                                height: "100%",
-                                width: "100%",
-                            }}
-                            contentFit="contain"
-                        />
-                    </View>
-                </XStack>
-                <XStack justifyContent="space-between">
-                    <Text>{quantity}m de {material} - {paymentMethod === "cash" ? "A vista" : "A prazo"}</Text>
-                    <Text>{formatedDate}</Text>
-                </XStack>
-            </YStack>
-        </TouchableOpacity>
+        <Link href={`/image/${encodeURIComponent(formattedSignature)}`} asChild>
+            <TouchableOpacity>
+                <YStack
+                    backgroundColor={theme.main?.val} padding={12}
+                    borderRadius={12}
+                >
+                    <XStack justifyContent="space-between" marginBottom={8} alignItems="center">
+                        <YStack>
+                            <Text fontSize={24}>{client}</Text>
+                            <Text>{plate}</Text>
+                        </YStack>
+                        <View
+                            backgroundColor={"white"}
+                            borderRadius={12}
+                            padding={20}
+                            height={75}
+                            width={129}
+                        >
+                            <Image
+                                source={formattedSignature}
+                                style={{
+                                    height: "100%",
+                                    width: "100%",
+                                }}
+                                contentFit="contain"
+                            />
+                        </View>
+                    </XStack>
+                    <XStack justifyContent="space-between">
+                        <Text>{quantity}m de {material} - {paymentMethod === "cash" ? "A vista" : "A prazo"}</Text>
+                        <Text>{formatedDate}</Text>
+                    </XStack>
+                </YStack>
+            </TouchableOpacity>
+        </Link>
+
     )
 }
