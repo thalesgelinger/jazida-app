@@ -3,8 +3,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Pressable } from 'react-native'
 import { Image } from "expo-image"
 import { View } from 'tamagui';
-import { SquareX, X } from 'lucide-react-native';
-import Animated from 'react-native-reanimated';
+import { SquareX } from 'lucide-react-native';
 
 export default function ImageView() {
 

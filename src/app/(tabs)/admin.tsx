@@ -1,5 +1,5 @@
-import { Button as TButton, Sheet, Text, useTheme, View, YStack } from "tamagui";
-import { Edit, FileCheck, Truck, User, Settings, File } from "lucide-react-native"
+import { Button as TButton, Sheet, Text, useTheme, View, YStack, XStack } from "tamagui";
+import { Edit, FileCheck, Truck, User, Settings, File, ChevronUp, ChevronDown } from "lucide-react-native"
 import React, { useState } from 'react'
 import { FlatList, RefreshControl } from "react-native";
 import { LoadTile } from "@/src/shared/ui/load-tile";
@@ -12,6 +12,10 @@ import { Input } from "@/src/shared/ui/input";
 import { documentDirectory, EncodingType, writeAsStringAsync } from "expo-file-system";
 import { isAvailableAsync, shareAsync } from "expo-sharing"
 import { formatSignatureUrl } from "@/src/shared/utils/format-signature";
+import { ClientsFilterSheet } from "@/src/features/admin/clients-filter";
+import { Filter } from "@/src/shared/ui/filter";
+import { PlatesFilterSheet } from "@/src/features/admin/plates-filter";
+import { ItemType } from "@/src/types/item";
 
 const ADMIN_PASS = "admin"
 
@@ -22,6 +26,11 @@ export default function Admin() {
     const [isOpenMaterials, setIsOpenMaterials] = useState(false)
     const [auth, setAuth] = useState(false);
     const [adminPass, setAdminPass] = useState("");
+
+    const [client, setClient] = useState<ItemType<number> | null>(null);
+    const [plate, setPlate] = useState("");
+    const [isOpenClientsFilter, setIsOpenClientsFilter] = useState(false)
+    const [isOpenPlatesFilter, setIsOpenPlatesFilter] = useState(false)
 
     const theme = useTheme()
 
@@ -131,6 +140,13 @@ export default function Admin() {
                     />}
                     ItemSeparatorComponent={() => <View height={12} />}
                     keyExtractor={(_, i) => i.toString()}
+                    stickyHeaderIndices={[0]}
+                    ListHeaderComponent={() => (
+                        <XStack width="100%" backgroundColor="white" marginBottom={20} gap={20}>
+                            <Filter name="Clients" onPress={() => setIsOpenClientsFilter(true)} />
+                            <Filter name="Placas" onPress={() => setIsOpenPlatesFilter(true)} />
+                        </XStack>
+                    )}
                     ListEmptyComponent={() => (
                         <YStack
                             flex={1}
@@ -194,6 +210,17 @@ export default function Admin() {
             </Sheet>
 
             <ClientsSheet open={isOpenClients} onOpenChange={setIsOpenClients} />
+            <ClientsFilterSheet
+                isOpen={isOpenClientsFilter}
+                setIsOpen={setIsOpenClientsFilter}
+                onSelect={setClient}
+            />
+            <PlatesFilterSheet
+                client={client}
+                isOpen={isOpenPlatesFilter}
+                setIsOpen={setIsOpenPlatesFilter}
+                onSelect={setPlate}
+            />
 
             <MaterialsSheet open={isOpenMaterials} onOpenChange={setIsOpenMaterials} />
         </>
