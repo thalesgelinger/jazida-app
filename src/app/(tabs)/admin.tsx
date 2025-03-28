@@ -37,14 +37,10 @@ export default function Admin() {
     const { query: { data: allLoads = [], isLoading } } = useLoads()
 
     const loads = allLoads.filter(load => {
+        const byClient = clientsFilter.length ? clientsFilter.some(c => c.label === load.client) : true
+        const byPlate = plateFilter.length ? plateFilter.some(c => c === load.plate) : true
 
-        if (clientsFilter.some(c => c.label === load.client)) {
-            return true
-        }
-
-        if (!clientsFilter.length) return true
-
-        return false
+        return byClient && byPlate
     })
 
     const queryClient = useQueryClient()
@@ -57,8 +53,12 @@ export default function Admin() {
         }
     }
 
-    const addPlateToFilter = (plate: string) => {
-        setPlateFilter([...plateFilter, plate])
+    const toggleOnPlateToFilter = (plate: string) => {
+        if (plateFilter.includes(plate)) {
+            setPlateFilter(plateFilter.filter(p => p !== plate))
+        } else {
+            setPlateFilter([...plateFilter, plate])
+        }
     }
 
     const onRefresh = () => {
@@ -147,9 +147,15 @@ export default function Admin() {
     }
 
     const filterLabel = (() => {
-        if (!clientsFilter.length) return ""
+        if (!clientsFilter.length && !plateFilter.length) return ""
         const clientsLabel = clientsFilter.map(c => c.label).join(", ")
-        return `Filtros: ${clientsLabel}`
+        const platesLabel = plateFilter.join(", ")
+
+        const labels = []
+        clientsFilter.length && labels.push(clientsLabel)
+        plateFilter.length && labels.push(platesLabel)
+
+        return `Filtros: ${labels.join(", ")}`
     })()
 
     return (
@@ -255,7 +261,7 @@ export default function Admin() {
                 clients={clientsFilter}
                 isOpen={isOpenPlatesFilter}
                 setIsOpen={setIsOpenPlatesFilter}
-                onSelect={addPlateToFilter}
+                onSelect={toggleOnPlateToFilter}
             />
 
             <MaterialsSheet open={isOpenMaterials} onOpenChange={setIsOpenMaterials} />

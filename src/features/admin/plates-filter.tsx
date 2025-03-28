@@ -1,10 +1,10 @@
 
-import { Search, User } from 'lucide-react-native'
+import { Search, User, X } from 'lucide-react-native'
 import React, { useState } from 'react'
-import { Sheet, useTheme, View, YStack } from 'tamagui'
+import { Sheet, Text, useTheme, View, YStack } from 'tamagui'
 import { usePlates } from '../new-load/use-plates'
 import { Input } from '@/src/shared/ui/input'
-import { FlatList } from 'react-native'
+import { FlatList, SectionList } from 'react-native'
 import { Button } from '@/src/shared/ui/button'
 import { ItemType } from '@/src/types/item'
 
@@ -20,12 +20,35 @@ export const PlatesFilterSheet = ({ clients, isOpen, setIsOpen, onSelect }: Plat
     const { query: { data: plates = [] } } = usePlates()
 
     const theme = useTheme()
+    const [selectedPlates, setSelectedPlates] = useState<string[]>([]);
 
     const [searchTerm, setSeachTerm] = useState("")
 
     const filteredItems = plates
         .filter(plate => clients.some(client => client.value === plate.value.clientId))
         .filter(item => item.label.toLowerCase().includes(searchTerm.toLowerCase()))
+
+    const select = (value: string) => {
+        onSelect?.(value)
+        setIsOpen(false)
+
+        if (selectedPlates.includes(value)) {
+            setSelectedPlates(selectedPlates.filter(c => c !== value))
+        } else {
+            setSelectedPlates([...selectedPlates, value])
+        }
+    }
+
+    const filterSections = [
+        {
+            title: "Filtros",
+            data: selectedPlates
+        },
+        {
+            title: "Todos",
+            data: filteredItems.filter(p => !selectedPlates.includes(p.label)).map(p => p.label)
+        },
+    ]
 
     return (
         <>
@@ -40,17 +63,25 @@ export const PlatesFilterSheet = ({ clients, isOpen, setIsOpen, onSelect }: Plat
                 <Sheet.Frame padding="20" >
                     <YStack gap="$5">
                         <Input onChangeText={setSeachTerm} Icon={Search} />
-                        <FlatList
-                            data={filteredItems}
-                            renderItem={({ item }) => <Button
-                                label={item.label}
-                                Icon={User}
+                        <SectionList
+                            sections={filterSections}
+                            renderItem={({ item, section }) => section.title === "Filtros" ? <Button
+                                label={item}
+                                Icon={X}
                                 color={theme.main?.val}
                                 onPress={() => {
-                                    onSelect?.(item.label)
-                                    setIsOpen(false)
+                                    select(item)
+                                }}
+                            /> : <Button
+                                label={item}
+                                Icon={User}
+                                onPress={() => {
+                                    select(item)
                                 }}
                             />}
+                            renderSectionHeader={({ section: { title } }) => (
+                                <Text>{title}</Text>
+                            )}
                             ItemSeparatorComponent={() => <View height={8} />}
                         />
 
