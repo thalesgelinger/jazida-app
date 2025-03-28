@@ -12,10 +12,10 @@ type PlatesFilterProps = {
     isOpen: boolean
     setIsOpen: (value: boolean) => void
     onSelect: (plate: string) => void
-    client: ItemType<number> | null
+    clients: Array<ItemType<number>>
 }
 
-export const PlatesFilterSheet = ({ client, isOpen, setIsOpen, onSelect }: PlatesFilterProps) => {
+export const PlatesFilterSheet = ({ clients, isOpen, setIsOpen, onSelect }: PlatesFilterProps) => {
 
     const { query: { data: plates = [] } } = usePlates()
 
@@ -24,7 +24,7 @@ export const PlatesFilterSheet = ({ client, isOpen, setIsOpen, onSelect }: Plate
     const [searchTerm, setSeachTerm] = useState("")
 
     const filteredItems = plates
-        .filter(plate => plate.value.clientId === client?.value)
+        .filter(plate => clients.some(client => client.value === plate.value.clientId))
         .filter(item => item.label.toLowerCase().includes(searchTerm.toLowerCase()))
 
     return (

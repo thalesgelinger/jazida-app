@@ -27,16 +27,39 @@ export default function Admin() {
     const [auth, setAuth] = useState(false);
     const [adminPass, setAdminPass] = useState("");
 
-    const [client, setClient] = useState<ItemType<number> | null>(null);
-    const [plate, setPlate] = useState("");
+    const [clientsFilter, setClientFilter] = useState<Array<ItemType<number>>>([]);
+    const [plateFilter, setPlateFilter] = useState<Array<string>>([]);
     const [isOpenClientsFilter, setIsOpenClientsFilter] = useState(false)
     const [isOpenPlatesFilter, setIsOpenPlatesFilter] = useState(false)
 
     const theme = useTheme()
 
-    const { query: { data: loads = [], isLoading } } = useLoads()
+    const { query: { data: allLoads = [], isLoading } } = useLoads()
+
+    const loads = allLoads.filter(load => {
+
+        if (clientsFilter.some(c => c.label === load.client)) {
+            return true
+        }
+
+        if (!clientsFilter.length) return true
+
+        return false
+    })
 
     const queryClient = useQueryClient()
+
+    const toggleOnClientFilter = (client: ItemType<number>) => {
+        if (clientsFilter.some(c => c.value === client.value)) {
+            setClientFilter(clientsFilter.filter(c => c.value !== client.value))
+        } else {
+            setClientFilter([...clientsFilter, client])
+        }
+    }
+
+    const addPlateToFilter = (plate: string) => {
+        setPlateFilter([...plateFilter, plate])
+    }
 
     const onRefresh = () => {
         queryClient.invalidateQueries({ queryKey: ['loads'] })
@@ -123,6 +146,12 @@ export default function Admin() {
         </YStack>
     }
 
+    const filterLabel = (() => {
+        if (!clientsFilter.length) return ""
+        const clientsLabel = clientsFilter.map(c => c.label).join(", ")
+        return `Filtros: ${clientsLabel}`
+    })()
+
     return (
         <>
             <View padding={20} backgroundColor={theme.background?.val} flex={1} position="relative">
@@ -142,10 +171,17 @@ export default function Admin() {
                     keyExtractor={(_, i) => i.toString()}
                     stickyHeaderIndices={[0]}
                     ListHeaderComponent={() => (
-                        <XStack width="100%" backgroundColor="white" marginBottom={20} gap={20}>
-                            <Filter name="Clients" onPress={() => setIsOpenClientsFilter(true)} />
-                            <Filter name="Placas" onPress={() => setIsOpenPlatesFilter(true)} />
-                        </XStack>
+                        <YStack>
+                            <XStack width="100%" backgroundColor="white" gap={20} paddingBottom={8}>
+                                <Filter name="Clients" onPress={() => setIsOpenClientsFilter(true)} />
+                                <Filter name="Placas" onPress={() => setIsOpenPlatesFilter(true)} />
+                            </XStack>
+                            {filterLabel && <XStack width="100%" backgroundColor="white" marginBottom={20} gap={20} paddingBottom={8}>
+                                <Text color="black">
+                                    {filterLabel}
+                                </Text>
+                            </XStack>}
+                        </YStack>
                     )}
                     ListEmptyComponent={() => (
                         <YStack
@@ -213,13 +249,13 @@ export default function Admin() {
             <ClientsFilterSheet
                 isOpen={isOpenClientsFilter}
                 setIsOpen={setIsOpenClientsFilter}
-                onSelect={setClient}
+                onSelect={toggleOnClientFilter}
             />
             <PlatesFilterSheet
-                client={client}
+                clients={clientsFilter}
                 isOpen={isOpenPlatesFilter}
                 setIsOpen={setIsOpenPlatesFilter}
-                onSelect={setPlate}
+                onSelect={addPlateToFilter}
             />
 
             <MaterialsSheet open={isOpenMaterials} onOpenChange={setIsOpenMaterials} />
