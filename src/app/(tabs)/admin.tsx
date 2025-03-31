@@ -1,7 +1,7 @@
 import { Button as TButton, Sheet, Text, useTheme, View, YStack, XStack } from "tamagui";
 import { Edit, FileCheck, Truck, User, Settings, File, ChevronUp, ChevronDown } from "lucide-react-native"
 import React, { useState } from 'react'
-import { FlatList, RefreshControl } from "react-native";
+import { FlatList, Pressable, RefreshControl } from "react-native";
 import { LoadTile } from "@/src/shared/ui/load-tile";
 import { Button } from "@/src/shared/ui/button";
 import { useLoads } from "@/src/features/new-load/use-loads";
@@ -16,6 +16,7 @@ import { ClientsFilterSheet } from "@/src/features/admin/clients-filter";
 import { Filter } from "@/src/shared/ui/filter";
 import { PlatesFilterSheet } from "@/src/features/admin/plates-filter";
 import { ItemType } from "@/src/types/item";
+import { DateFilter } from "@/src/features/admin/date-filter";
 
 const ADMIN_PASS = "admin"
 
@@ -29,18 +30,28 @@ export default function Admin() {
 
     const [clientsFilter, setClientFilter] = useState<Array<ItemType<number>>>([]);
     const [plateFilter, setPlateFilter] = useState<Array<string>>([]);
+    const [dateRange, setDateRange] = useState<{ start: Date | null, end: Date | null }>({ start: null, end: null });
     const [isOpenClientsFilter, setIsOpenClientsFilter] = useState(false)
     const [isOpenPlatesFilter, setIsOpenPlatesFilter] = useState(false)
+    const [isOpenDateFilter, setIsOpenDateFilter] = useState(false)
 
     const theme = useTheme()
 
     const { query: { data: allLoads = [], isLoading } } = useLoads()
 
+    const removeTime = (date: Date | null) => date?.toISOString().split("T")[0] ?? ""
+
     const loads = allLoads.filter(load => {
         const byClient = clientsFilter.length ? clientsFilter.some(c => c.label === load.client) : true
         const byPlate = plateFilter.length ? plateFilter.some(c => c === load.plate) : true
+        const { start: startDate, end: endDate } = dateRange
 
-        return byClient && byPlate
+        const start = removeTime(startDate)
+        const end = removeTime(endDate)
+        const loadDate = removeTime(load.insertedAt)
+        const byDate = start && end ? loadDate >= start && loadDate <= end : true
+
+        return byClient && byPlate && byDate
     })
 
     const queryClient = useQueryClient()
@@ -134,6 +145,10 @@ export default function Admin() {
         return brtDate.replace(",", " ");
     }
 
+    const filterByDate = (start: Date | null, end: Date | null) => {
+        setDateRange({ start, end })
+    }
+
     if (!auth) {
         return <YStack padding={20} justifyContent="center" flex={1} gap={20} >
             <Text fontSize={24}>Para acessar a area de admin você precisa da senha do admin</Text>
@@ -147,7 +162,9 @@ export default function Admin() {
     }
 
     const filterLabel = (() => {
-        if (!clientsFilter.length && !plateFilter.length) return ""
+        const { start, end } = dateRange
+        const hasFilterApplied = !clientsFilter.length && !plateFilter.length && !start && !end
+        if (hasFilterApplied) return ""
         const clientsLabel = clientsFilter.map(c => c.label).join(", ")
         const platesLabel = plateFilter.join(", ")
 
@@ -155,8 +172,17 @@ export default function Admin() {
         clientsFilter.length && labels.push(clientsLabel)
         plateFilter.length && labels.push(platesLabel)
 
+        if (!start || !end) {
+            return `Filtros: ${labels.join(", ")}`
+        }
+
+        const formattedStart = start.toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" })
+        const formattedEnd = end.toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" })
+        start && end && labels.push(`${formattedStart}-${formattedEnd}`)
+
         return `Filtros: ${labels.join(", ")}`
     })()
+
 
     return (
         <>
@@ -178,15 +204,24 @@ export default function Admin() {
                     stickyHeaderIndices={[0]}
                     ListHeaderComponent={() => (
                         <YStack>
-                            <XStack width="100%" backgroundColor="white" gap={20} paddingBottom={8}>
+                            <XStack
+                                width="100%"
+                                backgroundColor="white"
+                                gap={20}
+                                paddingBottom={8}
+                                alignItems="center"
+                            >
                                 <Filter name="Clients" onPress={() => setIsOpenClientsFilter(true)} />
                                 <Filter name="Placas" onPress={() => setIsOpenPlatesFilter(true)} />
+                                <Filter name="Data" onPress={() => setIsOpenDateFilter(true)} />
                             </XStack>
-                            {filterLabel && <XStack width="100%" backgroundColor="white" marginBottom={20} gap={20} paddingBottom={8}>
-                                <Text color="black">
-                                    {filterLabel}
-                                </Text>
-                            </XStack>}
+                            {filterLabel &&
+                                <XStack width="100%" backgroundColor="white" marginBottom={20} gap={20} paddingBottom={8}>
+                                    <Text color="black">
+                                        {filterLabel}
+                                    </Text>
+                                </XStack>
+                            }
                         </YStack>
                     )}
                     ListEmptyComponent={() => (
@@ -263,8 +298,8 @@ export default function Admin() {
                 setIsOpen={setIsOpenPlatesFilter}
                 onSelect={toggleOnPlateToFilter}
             />
-
             <MaterialsSheet open={isOpenMaterials} onOpenChange={setIsOpenMaterials} />
+            <DateFilter isOpen={isOpenDateFilter} setIsOpen={setIsOpenDateFilter} onSelect={filterByDate} />
         </>
     );
 }
