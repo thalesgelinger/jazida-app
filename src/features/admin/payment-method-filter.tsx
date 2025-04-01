@@ -1,57 +1,49 @@
 
-import { Search, User, X } from 'lucide-react-native'
+import { User, X } from 'lucide-react-native'
 import React, { useState } from 'react'
 import { Text, useTheme, View, YStack } from 'tamagui'
-import { useClients } from '../new-load/use-clients'
-import { Input } from '@/src/shared/ui/input'
 import { SectionList } from 'react-native'
 import { Button } from '@/src/shared/ui/button'
 import { ItemType } from '@/src/types/item'
+import { LoadType } from "@/src/types/load";
 
-type ClientsFilterProps = {
-    onSelect: (client: ItemType<number>) => void
+type PaymentMethodsFilterProps = {
+    onSelect: (client: ItemType<LoadType["paymentMethod"]>) => void
 }
 
-export const ClientsFilterSheet = ({ onSelect }: ClientsFilterProps) => {
+export const PaymentMethodsFilterSheet = ({ onSelect }: PaymentMethodsFilterProps) => {
 
     const theme = useTheme()
 
-    const { query: { data: clients = [] } } = useClients()
+    const [selectedPaymentMethods, setSelectedPaymentMethods] = useState<Array<ItemType<LoadType["paymentMethod"]>>>([]);
 
-    const [selectedClients, setSelectedClients] = useState<Array<ItemType<number>>>([]);
-    const [searchTerm, setSeachTerm] = useState("")
+    const items: Array<ItemType<LoadType["paymentMethod"]>> = [
+        { label: "A vista", value: "cash" },
+        { label: "A prazo", value: "installment" },
+    ]
 
-    const filteredItems = clients.filter(item => {
-        if (searchTerm === "") {
-            return clients
-        }
-
-        return item.label.toLowerCase().includes(searchTerm.toLowerCase())
-    })
-
-    const select = (client: ItemType<number>) => {
+    const select = (client: ItemType<LoadType["paymentMethod"]>) => {
         onSelect?.(client)
-        if (selectedClients.some(c => client.value === c.value)) {
-            setSelectedClients(selectedClients.filter(c => c.value !== client.value))
+        if (selectedPaymentMethods.some(c => client.value === c.value)) {
+            setSelectedPaymentMethods(selectedPaymentMethods.filter(c => c.value !== client.value))
         } else {
-            setSelectedClients([...selectedClients, client])
+            setSelectedPaymentMethods([...selectedPaymentMethods, client])
         }
     }
 
     const filterSections = [
         {
             title: "Filtros",
-            data: selectedClients
+            data: selectedPaymentMethods
         },
         {
             title: "Todos",
-            data: filteredItems.filter(c => !selectedClients.some(s => s.value === c.value))
+            data: items.filter(c => !selectedPaymentMethods.some(s => s.value === c.value))
         },
     ]
 
     return (
         <YStack gap="$5">
-            <Input onChangeText={setSeachTerm} Icon={Search} />
             <SectionList
                 sections={filterSections}
                 renderSectionHeader={({ section: { title } }) => (
@@ -83,3 +75,5 @@ export const ClientsFilterSheet = ({ onSelect }: ClientsFilterProps) => {
         </YStack>
     )
 }
+
+

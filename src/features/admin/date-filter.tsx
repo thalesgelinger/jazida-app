@@ -1,20 +1,21 @@
-import { Sheet, useTheme, YStack } from "tamagui"
+import { useTheme, YStack } from "tamagui"
 import { Calendar, DateData } from "react-native-calendars"
 import { useState } from "react"
 import { Button } from "@/src/shared/ui/button"
+import { useFilterContext } from "@/src/shared/ui/filter-sheet"
 
 type DateFilterProps = {
-    isOpen: boolean
-    setIsOpen: (value: boolean) => void
     onSelect: (start: Date | null, end: Date | null) => void
 }
 
-export const DateFilter = ({ isOpen, setIsOpen, onSelect }: DateFilterProps) => {
+export const DateFilter = ({ onSelect }: DateFilterProps) => {
 
     const theme = useTheme()
 
     const [start, setStart] = useState<string | null>(null);
     const [end, setEnd] = useState<string | null>(null);
+
+    const { setSheetId } = useFilterContext()
 
     const onDayPress = (day: DateData) => {
         const { dateString } = day;
@@ -65,34 +66,23 @@ export const DateFilter = ({ isOpen, setIsOpen, onSelect }: DateFilterProps) => 
         if (!start) return
         if (!end) return
         onSelect(new Date(start), new Date(end))
-        setIsOpen(false)
+        setSheetId(null)
     }
 
     return (
-        <Sheet
-            modal
-            open={isOpen}
-            onOpenChange={setIsOpen}
-            snapPoints={[70]}
-            dismissOnSnapToBottom
-        >
-            <Sheet.Overlay backgroundColor="'rgba(0, 0, 0, 0.6)'" />
-            <Sheet.Frame padding="20" >
-                <YStack gap="$5">
-                    <Calendar
-                        markingType="period"
-                        markedDates={getMarkedDates()}
-                        onDayPress={onDayPress}
-                    />
-                    <Button label="Filtrar" color={theme.main?.val} onPress={select} />
-                    <Button label="Limpar" onPress={() => {
-                        setStart(null)
-                        setEnd(null)
-                        onSelect(null, null)
-                        setIsOpen(false)
-                    }} />
-                </YStack>
-            </Sheet.Frame>
-        </Sheet>
+        <YStack gap="$5">
+            <Calendar
+                markingType="period"
+                markedDates={getMarkedDates()}
+                onDayPress={onDayPress}
+            />
+            <Button label="Filtrar" color={theme.main?.val} onPress={select} />
+            <Button label="Limpar" onPress={() => {
+                setStart(null)
+                setEnd(null)
+                onSelect(null, null)
+                setSheetId(null)
+            }} />
+        </YStack>
     )
 }

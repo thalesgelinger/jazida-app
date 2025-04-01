@@ -1,7 +1,7 @@
-import { Button as TButton, Sheet, Text, useTheme, View, YStack, XStack } from "tamagui";
-import { Edit, FileCheck, Truck, User, Settings, File, ChevronUp, ChevronDown } from "lucide-react-native"
+import { Button as TButton, Sheet, Text, useTheme, View, YStack, XStack, ScrollView } from "tamagui";
+import { Truck, User, Settings, File } from "lucide-react-native"
 import React, { useState } from 'react'
-import { FlatList, Pressable, RefreshControl } from "react-native";
+import { FlatList, RefreshControl } from "react-native";
 import { LoadTile } from "@/src/shared/ui/load-tile";
 import { Button } from "@/src/shared/ui/button";
 import { useLoads } from "@/src/features/new-load/use-loads";
@@ -13,10 +13,12 @@ import { documentDirectory, EncodingType, writeAsStringAsync } from "expo-file-s
 import { isAvailableAsync, shareAsync } from "expo-sharing"
 import { formatSignatureUrl } from "@/src/shared/utils/format-signature";
 import { ClientsFilterSheet } from "@/src/features/admin/clients-filter";
-import { Filter } from "@/src/shared/ui/filter";
+import { Filter, useFilterContext } from "@/src/shared/ui/filter-sheet";
 import { PlatesFilterSheet } from "@/src/features/admin/plates-filter";
 import { ItemType } from "@/src/types/item";
 import { DateFilter } from "@/src/features/admin/date-filter";
+import { LoadType } from "@/src/types/load";
+import { PaymentMethodsFilterSheet } from "@/src/features/admin/payment-method-filter";
 
 const ADMIN_PASS = "admin"
 
@@ -31,11 +33,10 @@ export default function Admin() {
     const [clientsFilter, setClientFilter] = useState<Array<ItemType<number>>>([]);
     const [plateFilter, setPlateFilter] = useState<Array<string>>([]);
     const [dateRange, setDateRange] = useState<{ start: Date | null, end: Date | null }>({ start: null, end: null });
-    const [isOpenClientsFilter, setIsOpenClientsFilter] = useState(false)
-    const [isOpenPlatesFilter, setIsOpenPlatesFilter] = useState(false)
-    const [isOpenDateFilter, setIsOpenDateFilter] = useState(false)
+    const [paymentMethodsFilter, setPaymentMethodsFilter] = useState<Array<ItemType<LoadType["paymentMethod"]>>>([]);
 
     const theme = useTheme()
+    const setSheetId = useFilterContext(state => state.setSheetId)
 
     const { query: { data: allLoads = [], isLoading } } = useLoads()
 
@@ -50,13 +51,15 @@ export default function Admin() {
         const end = removeTime(endDate)
         const loadDate = removeTime(load.insertedAt)
         const byDate = start && end ? loadDate >= start && loadDate <= end : true
+        const byPaymentMethod = paymentMethodsFilter.length ? paymentMethodsFilter.some(p => p.value === load.paymentMethod) : true
 
-        return byClient && byPlate && byDate
+        return byClient && byPlate && byDate && byPaymentMethod
     })
 
     const queryClient = useQueryClient()
 
     const toggleOnClientFilter = (client: ItemType<number>) => {
+        setSheetId(null)
         if (clientsFilter.some(c => c.value === client.value)) {
             setClientFilter(clientsFilter.filter(c => c.value !== client.value))
         } else {
@@ -65,6 +68,7 @@ export default function Admin() {
     }
 
     const toggleOnPlateToFilter = (plate: string) => {
+        setSheetId(null)
         if (plateFilter.includes(plate)) {
             setPlateFilter(plateFilter.filter(p => p !== plate))
         } else {
@@ -147,6 +151,16 @@ export default function Admin() {
 
     const filterByDate = (start: Date | null, end: Date | null) => {
         setDateRange({ start, end })
+        setSheetId(null)
+    }
+
+    const selectPaymentFilter = (item: ItemType<LoadType["paymentMethod"]>) => {
+        setSheetId(null)
+        if (paymentMethodsFilter.some(p => p.value === item.value)) {
+            setPaymentMethodsFilter(paymentMethodsFilter.filter(p => p.value !== item.value))
+        } else {
+            setPaymentMethodsFilter([...paymentMethodsFilter, item])
+        }
     }
 
     if (!auth) {
@@ -163,22 +177,30 @@ export default function Admin() {
 
     const filterLabel = (() => {
         const { start, end } = dateRange
-        const hasFilterApplied = !clientsFilter.length && !plateFilter.length && !start && !end
+        const hasFilterApplied = !clientsFilter.length && !plateFilter.length && !start && !end && !paymentMethodsFilter.length
         if (hasFilterApplied) return ""
-        const clientsLabel = clientsFilter.map(c => c.label).join(", ")
-        const platesLabel = plateFilter.join(", ")
 
         const labels = []
-        clientsFilter.length && labels.push(clientsLabel)
-        plateFilter.length && labels.push(platesLabel)
-
-        if (!start || !end) {
-            return `Filtros: ${labels.join(", ")}`
+        if (clientsFilter.length) {
+            const clientsLabel = clientsFilter.map(c => c.label).join(", ")
+            labels.push(clientsLabel)
         }
 
-        const formattedStart = start.toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" })
-        const formattedEnd = end.toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" })
-        start && end && labels.push(`${formattedStart}-${formattedEnd}`)
+        if (plateFilter.length) {
+            const platesLabel = plateFilter.join(", ")
+            labels.push(platesLabel)
+        }
+
+        if (paymentMethodsFilter.length) {
+            const paymentMethodsLabel = paymentMethodsFilter.map(p => p.label).join(", ")
+            labels.push(paymentMethodsLabel)
+        }
+
+        if (start && end) {
+            const formattedStart = start.toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" })
+            const formattedEnd = end.toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" })
+            start && end && labels.push(`${formattedStart}-${formattedEnd}`)
+        }
 
         return `Filtros: ${labels.join(", ")}`
     })()
@@ -186,35 +208,45 @@ export default function Admin() {
 
     return (
         <>
-            <View padding={20} backgroundColor={theme.background?.val} flex={1} position="relative">
+            <View backgroundColor={theme.background?.val} flex={1} position="relative">
                 <FlatList
                     contentContainerStyle={{ flexGrow: 1 }}
                     data={loads}
-                    renderItem={({ item }) => <LoadTile
-                        client={item.client}
-                        plate={item.plate}
-                        quantity={item.quantity}
-                        material={item.material}
-                        signatureUrl={item.signaturePath}
-                        date={item.insertedAt}
-                        paymentMethod={item.paymentMethod}
-                    />}
+                    showsVerticalScrollIndicator={false}
+                    renderItem={({ item }) => <View paddingHorizontal={20}>
+                        <LoadTile
+                            client={item.client}
+                            plate={item.plate}
+                            quantity={item.quantity}
+                            material={item.material}
+                            signatureUrl={item.signaturePath}
+                            date={item.insertedAt}
+                            paymentMethod={item.paymentMethod}
+                        />
+                    </View>}
                     ItemSeparatorComponent={() => <View height={12} />}
                     keyExtractor={(_, i) => i.toString()}
                     stickyHeaderIndices={[0]}
                     ListHeaderComponent={() => (
                         <YStack>
-                            <XStack
+                            <ScrollView
                                 width="100%"
                                 backgroundColor="white"
-                                gap={20}
+                                paddingTop={20}
+                                paddingHorizontal={8}
                                 paddingBottom={8}
-                                alignItems="center"
+                                horizontal
+                                showsHorizontalScrollIndicator={false}
+                                contentContainerStyle={{
+                                    alignItems: "center",
+                                    gap: 20
+                                }}
                             >
-                                <Filter name="Clients" onPress={() => setIsOpenClientsFilter(true)} />
-                                <Filter name="Placas" onPress={() => setIsOpenPlatesFilter(true)} />
-                                <Filter name="Data" onPress={() => setIsOpenDateFilter(true)} />
-                            </XStack>
+                                <Filter.Trigger id="clients" label="Clientes" />
+                                <Filter.Trigger id="plates" label="Placas" />
+                                <Filter.Trigger id="dates" label="Data" />
+                                <Filter.Trigger id="payments" label="Método de Pagamento" />
+                            </ScrollView>
                             {filterLabel &&
                                 <XStack width="100%" backgroundColor="white" marginBottom={20} gap={20} paddingBottom={8}>
                                     <Text color="black">
@@ -287,19 +319,24 @@ export default function Admin() {
             </Sheet>
 
             <ClientsSheet open={isOpenClients} onOpenChange={setIsOpenClients} />
-            <ClientsFilterSheet
-                isOpen={isOpenClientsFilter}
-                setIsOpen={setIsOpenClientsFilter}
-                onSelect={toggleOnClientFilter}
-            />
-            <PlatesFilterSheet
-                clients={clientsFilter}
-                isOpen={isOpenPlatesFilter}
-                setIsOpen={setIsOpenPlatesFilter}
-                onSelect={toggleOnPlateToFilter}
-            />
+
             <MaterialsSheet open={isOpenMaterials} onOpenChange={setIsOpenMaterials} />
-            <DateFilter isOpen={isOpenDateFilter} setIsOpen={setIsOpenDateFilter} onSelect={filterByDate} />
+
+            <Filter.Sheet id="clients">
+                <ClientsFilterSheet onSelect={toggleOnClientFilter} />
+            </Filter.Sheet>
+
+            <Filter.Sheet id="plates">
+                <PlatesFilterSheet clients={clientsFilter} onSelect={toggleOnPlateToFilter} />
+            </Filter.Sheet>
+
+            <Filter.Sheet id="dates">
+                <DateFilter onSelect={filterByDate} />
+            </Filter.Sheet>
+
+            <Filter.Sheet id="payments">
+                <PaymentMethodsFilterSheet onSelect={selectPaymentFilter} />
+            </Filter.Sheet>
         </>
     );
 }
