@@ -34,6 +34,12 @@
                     "resizeMode": "contain",
                     "backgroundColor": "#F4C03E"
                 }
+            ],
+            [
+                "onesignal-expo-plugin",
+                {
+                    "mode": "development"
+                }
             ]
         ],
         "experiments": {
@@ -45,7 +51,8 @@
             },
             "eas": {
                 "projectId": "28b4db64-0864-4249-9da3-660592c3920f"
-            }
+            },
+            "oneSignalAppId": "7da8c6f0-f5f2-447f-85f0-5171a9004bec"
         }
     }
 }

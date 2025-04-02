@@ -1,6 +1,6 @@
-import { Button as TButton, Sheet, Text, useTheme, View, YStack, XStack, ScrollView } from "tamagui";
-import { Truck, User, Settings, File } from "lucide-react-native"
-import React, { useState } from 'react'
+import { Button as TButton, Sheet, Text, useTheme, View, YStack, XStack, ScrollView, Switch, Separator, Label } from "tamagui";
+import { Truck, User, Settings, Share } from "lucide-react-native"
+import React, { useEffect, useState } from 'react'
 import { FlatList, RefreshControl } from "react-native";
 import { LoadTile } from "@/src/shared/ui/load-tile";
 import { Button } from "@/src/shared/ui/button";
@@ -19,6 +19,7 @@ import { ItemType } from "@/src/types/item";
 import { DateFilter } from "@/src/features/admin/date-filter";
 import { LoadType } from "@/src/types/load";
 import { PaymentMethodsFilterSheet } from "@/src/features/admin/payment-method-filter";
+import { Notifications } from "@/src/shared/services/pushnotification";
 
 const ADMIN_PASS = "admin"
 
@@ -82,6 +83,9 @@ export default function Admin() {
 
     const authorize = () => {
         setAuth(adminPass === ADMIN_PASS)
+        if (adminPass === ADMIN_PASS) {
+            Notifications.setup()
+        }
     }
 
     const exportToCsv = async () => {
@@ -161,6 +165,10 @@ export default function Admin() {
         } else {
             setPaymentMethodsFilter([...paymentMethodsFilter, item])
         }
+    }
+
+    const enableNotifications = (value: boolean) => {
+        Notifications.requestPermission(value)
     }
 
     if (!auth) {
@@ -309,11 +317,25 @@ export default function Admin() {
                         />
 
                         <Button
-                            label="Exportar para csv"
-                            Icon={File}
+                            label="Exportar Planilha"
+                            Icon={Share}
                             color={theme.main?.val}
                             onPress={exportToCsv}
                         />
+                        <XStack width="100%" alignItems="center" gap="$4">
+                            <Label
+                                paddingRight="$0"
+                                justifyContent="flex-end"
+                                flex={1}
+                                fontWeight="bold"
+                            >
+                                Habilitar Notificações
+                            </Label>
+                            <Separator minHeight={20} vertical />
+                            <Switch onCheckedChange={enableNotifications}>
+                                <Switch.Thumb animation="quicker" backgroundColor={theme.main?.val} />
+                            </Switch>
+                        </XStack>
                     </YStack>
                 </Sheet.Frame>
             </Sheet>
